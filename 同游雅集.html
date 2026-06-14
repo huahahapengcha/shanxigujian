@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>同游雅集 - 陕西古建筑数字平台</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --red:       #8A2E2E;
+      --red-dark:  #6B1F1F;
+      --red-light: #A84040;
+      --gold:      #B9975B;
+      --gold-light:#D4B478;
+      --gold-pale: #ECD9A8;
+      --ink:       #3D434A;
+      --ink-light: #5A6370;
+      --paper:     #F5F1E8;
+      --paper-dark:#EDE7D4;
+      --paper-deep:#E2D9C2;
+      --white:     #FDFAF3;
+      --shadow:    rgba(61,67,74,0.18);
+      --ff-serif:  'Noto Serif SC', serif;
+      --ff-sans:   'Noto Sans SC', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--ff-serif);
+      background-color: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Paper texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    /* ============================================================
+       TOP NAVIGATION - 仿照千年遗韵风格
+       ============================================================ */
+    #topbar{
+      position:fixed;inset:0 0 auto 0;height:56px;z-index:1200;
+      display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+      background:#FFFFFF;
+      border-top:1px solid var(--gold);
+      border-bottom:1px solid var(--gold);
+      box-shadow:0 4px 14px rgba(96,74,40,.10);
+    }
+
+    .nav-btn{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:7px 13px;border-radius:4px;
+      background:var(--red);color:#fff;font-size:13px;
+      border:1px solid var(--gold);
+      cursor:pointer;transition:all .3s;letter-spacing:.05em;text-decoration:none;
+      box-shadow:0 2px 6px rgba(158,61,45,.22);
+    }
+    .nav-btn:hover{background:#8B3326;border-color:var(--gold);color:#fff}
+
+    #site-title{
+      position:absolute;left:50%;transform:translateX(-50%);
+      display:flex;align-items:center;gap:11px;user-select:none;white-space:nowrap;
+    }
+    #site-title h1{
+      margin:0;font-family:var(--ff-serif);font-size:23px;font-weight:700;
+      letter-spacing:.32em;text-indent:.32em;color:#A8861D;
+      display:flex;align-items:center;gap:14px;
+    }
+    /* 标题两侧的极简回纹装饰(金色) */
+    #site-title h1::before,#site-title h1::after{
+      content:"";width:58px;height:10px;flex:none;opacity:.85;
+      background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='10'%3E%3Cpath d='M1 9V1h12v5H7V4' fill='none' stroke='%23D4AF37' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x left center;
+    }
+    #site-title h1::after{transform:scaleX(-1)}
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--red) 0%, #6B1F1F 100%);
+      padding: 96px 0 40px;
+      text-align: center;
+    }
+
+    .hero-banner h1 {
+      color: #fff;
+      font-size: 28px;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+    }
+
+    .hero-banner p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+
+    /* Tabs */
+    .community-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(185, 151, 91, 0.2);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 12px 32px;
+      font-size: 16px;
+      color: var(--ink-light);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s;
+      letter-spacing: 2px;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Knowledge Community */
+    .community-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr 320px;
+      gap: 24px;
+    }
+
+    .community-panel {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .community-panel.main-panel {
+      grid-column: 2;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--cream);
+    }
+
+    .panel-header h3 {
+      font-size: 16px;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-header h3 i {
+      color: var(--gold);
+    }
+
+    .badge {
+      background: var(--gold);
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+
+    /* Collection List */
+    .collection-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .collection-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .collection-item:hover {
+      background: var(--paper);
+    }
+
+    .collection-thumb {
+      width: 50px;
+      height: 38px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    .collection-thumb svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .collection-info h4 {
+      font-size: 13px;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .collection-info p {
+      font-size: 11px;
+      color: var(--ink-lighter);
+    }
+
+    .action-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--gold);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+      background: rgba(185, 151, 91, 0.1);
+      color: var(--primary);
+    }
+
+    .btn-more {
+      width: 100%;
+      background: none;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+
+    .btn-more:hover {
+      background: rgba(185, 151, 91, 0.1);
+    }
+
+    /* Note Cards */
+    .note-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .note-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-light);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .username {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .time {
+      font-size: 11px;
+      color: var(--ink-lighter);
+    }
+
+    .note-tags {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .tag {
+      background: rgba(138, 46, 46, 0.1);
+      color: var(--primary);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .note-title {
+      font-size: 16px;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .note-content {
+      font-size: 14px;
+      color: var(--ink-light);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .note-images {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .note-img {
+      width: calc(50% - 4px);
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+
+    .note-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 24px;
+      padding-top: 12px;
+      border-top: 1px solid var(--cream);
+    }
+
+    .note-actions .action {
+      background: none;
+      border: none;
+      color: var(--ink-light);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s;
+    }
+
+    .note-actions .action:hover {
+      color: var(--primary);
+    }
+
+    /* Upload Cards */
+    .upload-card {
+      background: var(--paper);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 12px;
+    }
+
+    .upload-card:hover {
+      background: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .upload-card p {
+      font-size: 14px;
+      color: var(--ink);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .upload-card .hint {
+      font-size: 11px;
+      color: var(--ink-lighter);
+    }
+
+    /* Stats Card */
+    .stats-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      background: linear-gradient(135deg, rgba(138, 46, 46, 0.05) 0%, rgba(185, 151, 91, 0.05) 100%);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--ink-lighter);
+    }
+
+    /* Check-in Container */
+    .checkin-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+    }
+
+    .checkin-map {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .map-header h3 {
+      font-size: 16px;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .map-header h3 i {
+      color: var(--gold);
+    }
+
+    .map-legend {
+      display: flex;
+      gap: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--ink-light);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.visited {
+      background: var(--primary);
+    }
+
+    .dot.unvisited {
+      background: #fff;
+      border: 2px solid var(--gold);
+    }
+
+    .dot.bonus {
+      background: var(--gold);
+    }
+
+    .map-canvas {
+      background: var(--cream);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .map-canvas svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .city-marker {
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .city-marker:hover {
+      transform: scale(1.1);
+    }
+
+    /* Check-in Sidebar */
+    .checkin-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .progress-card,
+    .badges-card,
+    .vote-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .progress-card h3,
+    .badges-card h3,
+    .vote-card h3 {
+      font-size: 16px;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .progress-card h3 i,
+    .badges-card h3 i,
+    .vote-card h3 i {
+      color: var(--gold);
+    }
+
+    .progress-circle {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 16px;
+    }
+
+    .progress-circle svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .progress-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .progress-value {
+      display: block;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .progress-label {
+      font-size: 11px;
+      color: var(--ink-lighter);
+    }
+
+    .progress-details {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      font-size: 13px;
+      color: var(--ink-light);
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .badge-item {
+      text-align: center;
+    }
+
+    .badge-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 6px;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .badge-icon.locked {
+      background: var(--cream);
+      color: var(--ink-lighter);
+    }
+
+    .badge-item span {
+      font-size: 11px;
+      color: var(--ink-light);
+    }
+
+    .vote-question {
+      font-size: 14px;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .vote-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vote-option {
+      background: var(--paper);
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vote-option:hover {
+      border-color: var(--gold);
+    }
+
+    .option-text {
+      font-size: 13px;
+      color: var(--ink);
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .option-percent {
+      font-size: 12px;
+      color: var(--ink-lighter);
+      float: right;
+    }
+
+    .option-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--gold);
+      transition: width 0.5s;
+    }
+
+    .vote-hint {
+      display: block;
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-lighter);
+      margin-top: 12px;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--ink);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 40px 0;
+      margin-top: 40px;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-section h4 {
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      margin-bottom: 8px;
+    }
+
+    .footer-section ul li a {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-section ul li a:hover {
+      color: #fff;
+    }
+
+    .footer-bottom {
+      padding-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .community-grid {
+        grid-template-columns: 280px 1fr 300px;
+      }
+
+      .checkin-container {
+        grid-template-columns: 1fr 360px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .community-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .community-panel.main-panel {
+        grid-column: auto;
+      }
+
+      .checkin-container {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-banner h1 {
+        font-size: 22px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header id="topbar">
+    <a href="陕西古建筑旅游信息平台.html" class="nav-btn">
+      <i class="fa-solid fa-home"></i>
+      <span>返回首页</span>
+    </a>
+    <div id="site-title">
+      <h1>同游雅集</h1>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <div class="hero-banner">
+    <h1>同游雅集 · 共探古建之美</h1>
+    <p>记录、分享、探索，与万千古建爱好者共赴文化之旅</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="community-tabs" id="communityTabs">
+    <button class="tab-btn active" data-tab="knowledge">知识社区</button>
+    <button class="tab-btn" data-tab="checkin">数字打卡</button>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Knowledge Community Tab -->
+    <div class="tab-content active" id="knowledgeTab">
+      <div class="community-grid">
+        <!-- Left column: My Collection -->
+        <div class="community-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-bookmark"></i> 我的收藏</h3>
+            <span class="badge">12</span>
+          </div>
+          <div class="collection-list">
+            <div class="collection-item">
+              <div class="collection-thumb">
+                <svg viewBox="0 0 60 45" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="60" height="45" fill="#E8D9BC"/>
+                  <rect x="5" y="25" width="50" height="15" fill="#8B7355"/>
+                  <rect x="8" y="18" width="44" height="8" fill="#7A6248"/>
+                  <path d="M0,26 Q30,10 60,26" fill="none" stroke="#5A3E28" stroke-width="1"/>
+                </svg>
+              </div>
+              <div class="collection-info">
+                <h4>西安城墙</h4>
+                <p>收藏于 2024-03-15</p>
+              </div>
+              <button class="action-btn"><i class="fa-solid fa-star"></i></button>
+            </div>
+            <div class="collection-item">
+              <div class="collection-thumb">
+                <svg viewBox="0 0 60 45" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="60" height="45" fill="#DDD0B8"/>
+                  <rect x="25" y="20" width="10" height="20" fill="#8B7355"/>
+                  <polygon points="30,5 35,20 25,20" fill="#7A6248"/>
+                </svg>
+              </div>
+              <div class="collection-info">
+                <h4>大雁塔</h4>
+                <p>收藏于 2024-03-12</p>
+              </div>
+              <button class="action-btn"><i class="fa-solid fa-star"></i></button>
+            </div>
+            <div class="collection-item">
+              <div class="collection-thumb">
+                <svg viewBox="0 0 60 45" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="60" height="45" fill="#E4D8C0"/>
+                  <rect x="15" y="15" width="30" height="25" fill="#8B7355"/>
+                  <path d="M10,17 Q30,5 50,17" fill="none" stroke="#5A3E28" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="collection-info">
+                <h4>西安钟楼</h4>
+                <p>收藏于 2024-03-10</p>
+              </div>
+              <button class="action-btn"><i class="fa-solid fa-star"></i></button>
+            </div>
+          </div>
+          <button class="btn-more">查看全部收藏 →</button>
+        </div>
+
+        <!-- Center column: Latest Notes -->
+        <div class="community-panel main-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-scroll"></i> 最新笔记</h3>
+            <button class="btn-primary" id="createNoteBtn">发布笔记</button>
+          </div>
+
+          <!-- Note Card 1 -->
+          <div class="note-card">
+            <div class="note-header">
+              <div class="user-avatar">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="user-info">
+                <span class="username">长安墨客</span>
+                <span class="time">2小时前</span>
+              </div>
+              <div class="note-tags">
+                <span class="tag">西安城墙</span>
+              </div>
+            </div>
+            <h4 class="note-title">漫步城墙之上，感受千年时光</h4>
+            <p class="note-content">今日登上西安城墙，春日暖阳洒在青砖之上，恍惚间仿佛看见千年前的长安盛景。城墙上的每一块砖都承载着历史的记忆，漫步其中，能感受到岁月流转的厚重。从永宁门到安定门，每一步都是与历史的对话。</p>
+            <div class="note-images">
+              <div class="note-img"><img src="https://neeko-copilot.bytedance.net/api/text_to_image?prompt=ancient%20city%20wall%20Xi%27an%20sunset%20traditional%20Chinese%20architecture&image_size=landscape_4_3" alt="城墙风景"></div>
+              <div class="note-img"><img src="https://neeko-copilot.bytedance.net/api/text_to_image?prompt=ancient%20city%20wall%20crenellations%20detail%20traditional%20architecture&image_size=landscape_4_3" alt="城垛细节"></div>
+            </div>
+            <div class="note-actions">
+              <button class="action"><i class="fa-solid fa-heart"></i> <span>28</span></button>
+              <button class="action"><i class="fa-solid fa-comment"></i> <span>5</span></button>
+              <button class="action"><i class="fa-solid fa-share"></i> <span>分享</span></button>
+              <button class="action"><i class="fa-solid fa-bookmark"></i> <span>收藏</span></button>
+            </div>
+          </div>
+
+          <!-- Note Card 2 -->
+          <div class="note-card">
+            <div class="note-header">
+              <div class="user-avatar">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="user-info">
+                <span class="username">古建寻踪者</span>
+                <span class="time">5小时前</span>
+              </div>
+              <div class="note-tags">
+                <span class="tag">大雁塔</span>
+                <span class="tag">文化探索</span>
+              </div>
+            </div>
+            <h4 class="note-title">大雁塔的建筑美学与历史传承</h4>
+            <p class="note-content">大雁塔作为唐代建筑的典范，其结构之精妙令人叹服。塔身比例匀称，每层檐角微微翘起，展现出大唐盛世的雄浑气魄。塔内的楼梯盘旋而上，每一层都有不同的风景，登至塔顶，可俯瞰整个西安城。</p>
+            <div class="note-actions">
+              <button class="action"><i class="fa-solid fa-heart"></i> <span>45</span></button>
+              <button class="action"><i class="fa-solid fa-comment"></i> <span>12</span></button>
+              <button class="action"><i class="fa-solid fa-share"></i> <span>分享</span></button>
+              <button class="action"><i class="fa-solid fa-bookmark"></i> <span>收藏</span></button>
+            </div>
+          </div>
+
+          <!-- Note Card 3 -->
+          <div class="note-card">
+            <div class="note-header">
+              <div class="user-avatar">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="user-info">
+                <span class="username">文化守护者</span>
+                <span class="time">昨天</span>
+              </div>
+              <div class="note-tags">
+                <span class="tag">韩城古城</span>
+                <span class="tag">历史保护</span>
+              </div>
+            </div>
+            <h4 class="note-title">韩城古城的保护与传承之路</h4>
+            <p class="note-content">韩城古城是国内保存最完整的明清古城之一，漫步其中，仿佛穿越回了几百年前。这里的每一座院落都有着独特的故事，每一条街道都保留着历史的印记。近年来的保护修缮工作让这座古城重新焕发生机。</p>
+            <div class="note-images">
+              <div class="note-img"><img src="https://neeko-copilot.bytedance.net/api/text_to_image?prompt=ancient%20town%20streets%20traditional%20Chinese%20architecture%20night&image_size=landscape_4_3" alt="韩城夜景"></div>
+            </div>
+            <div class="note-actions">
+              <button class="action"><i class="fa-solid fa-heart"></i> <span>67</span></button>
+              <button class="action"><i class="fa-solid fa-comment"></i> <span>23</span></button>
+              <button class="action"><i class="fa-solid fa-share"></i> <span>分享</span></button>
+              <button class="action"><i class="fa-solid fa-bookmark"></i> <span>收藏</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Quick Actions -->
+        <div class="community-panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-upload"></i> 内容共创</h3>
+          </div>
+          
+          <!-- Upload Image Card -->
+          <div class="upload-card">
+            <div class="upload-icon">
+              <i class="fa-solid fa-image"></i>
+            </div>
+            <p>上传古建影像</p>
+            <span class="hint">补充古建筑的精美照片</span>
+          </div>
+
+          <!-- Error Correction Card -->
+          <div class="upload-card">
+            <div class="upload-icon" style="background:#A84040;">
+              <i class="fa-solid fa-pencil"></i>
+            </div>
+            <p>古建纠错</p>
+            <span class="hint">发现信息有误？提交审核</span>
+          </div>
+
+          <!-- Review Card -->
+          <div class="upload-card">
+            <div class="upload-icon" style="background:#B9975B;">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <p>评分评论</p>
+            <span class="hint">分享你的游览体验</span>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-card">
+            <div class="stat-item">
+              <span class="stat-value">2,847</span>
+              <span class="stat-label">用户笔记</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">8,356</span>
+              <span class="stat-label">影像素材</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">1,248</span>
+              <span class="stat-label">纠错建议</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-in Tab -->
+    <div class="tab-content" id="checkinTab">
+      <div class="checkin-container">
+        <!-- Map Area -->
+        <div class="checkin-map">
+          <div class="map-header">
+            <h3><i class="fa-solid fa-map"></i> 陕西古建打卡地图</h3>
+            <div class="map-legend">
+              <span class="legend-item"><span class="dot visited"></span> 已打卡</span>
+              <span class="legend-item"><span class="dot unvisited"></span> 待探索</span>
+              <span class="legend-item"><span class="dot bonus"></span> 限定奖励</span>
+            </div>
+          </div>
+          <div class="map-canvas">
+            <!-- Simplified Shaanxi map with landmarks -->
+            <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+              <!-- Province outline -->
+              <path d="M50,180 Q80,100 120,80 Q180,50 250,60 Q320,70 350,120 Q360,180 340,240 Q300,280 220,270 Q150,260 80,240 Q50,210 50,180 Z" 
+                    fill="#EDE7D4" stroke="#B9975B" stroke-width="1.5"/>
+              
+              <!-- City markers -->
+              <g class="city-marker visited" transform="translate(200, 150)">
+                <circle r="12" fill="#8A2E2E"/>
+                <circle r="8" fill="#fff"/>
+                <text y="30" text-anchor="middle" font-size="10" fill="#3D434A">西安</text>
+                <text y="42" text-anchor="middle" font-size="8" fill="#5A6370">6/8 已打卡</text>
+              </g>
+              
+              <g class="city-marker visited" transform="translate(120, 220)">
+                <circle r="10" fill="#8A2E2E"/>
+                <circle r="6" fill="#fff"/>
+                <text y="26" text-anchor="middle" font-size="10" fill="#3D434A">韩城</text>
+                <text y="36" text-anchor="middle" font-size="8" fill="#5A6370">3/4 已打卡</text>
+              </g>
+              
+              <g class="city-marker unvisited" transform="translate(280, 100)">
+                <circle r="10" fill="#EDE7D4" stroke="#B9975B" stroke-width="2"/>
+                <text y="26" text-anchor="middle" font-size="10" fill="#3D434A">宝鸡</text>
+                <text y="36" text-anchor="middle" font-size="8" fill="#5A6370">0/5 待探索</text>
+              </g>
+              
+              <g class="city-marker bonus" transform="translate(180, 80)">
+                <circle r="10" fill="#B9975B"/>
+                <text y="26" text-anchor="middle" font-size="10" fill="#3D434A">法门寺</text>
+                <text y="36" text-anchor="middle" font-size="8" fill="#5A6370">限定奖励</text>
+              </g>
+              
+              <g class="city-marker unvisited" transform="translate(320, 200)">
+                <circle r="10" fill="#EDE7D4" stroke="#B9975B" stroke-width="2"/>
+                <text y="26" text-anchor="middle" font-size="10" fill="#3D434A">汉中</text>
+                <text y="36" text-anchor="middle" font-size="8" fill="#5A6370">0/3 待探索</text>
+              </g>
+              
+              <!-- Connection lines -->
+              <line x1="200" y1="150" x2="120" y2="220" stroke="#B9975B" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+              <line x1="200" y1="150" x2="280" y2="100" stroke="#B9975B" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+              <line x1="200" y1="150" x2="180" y2="80" stroke="#B9975B" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Check-in Stats & Rewards -->
+        <div class="checkin-sidebar">
+          <!-- Progress Card -->
+          <div class="progress-card">
+            <h3><i class="fa-solid fa-trophy"></i> 打卡进度</h3>
+            <div class="progress-circle">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#EDE7D4" stroke-width="8"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#8A2E2E" stroke-width="8"
+                        stroke-dasharray="264" stroke-dashoffset="80" stroke-linecap="round"/>
+              </svg>
+              <div class="progress-inner">
+                <span class="progress-value">65%</span>
+                <span class="progress-label">完成度</span>
+              </div>
+            </div>
+            <div class="progress-details">
+              <span>已打卡: 9 / 14</span>
+              <span>连续打卡: 7天</span>
+            </div>
+          </div>
+
+          <!-- Badges -->
+          <div class="badges-card">
+            <h3><i class="fa-solid fa-award"></i> 已获得徽章</h3>
+            <div class="badges-grid">
+              <div class="badge-item">
+                <div class="badge-icon" style="background:#8A2E2E;">
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <span>初访者</span>
+              </div>
+              <div class="badge-item">
+                <div class="badge-icon" style="background:#B9975B;">
+                  <i class="fa-solid fa-calendar-day"></i>
+                </div>
+                <span>连续7天</span>
+              </div>
+              <div class="badge-item">
+                <div class="badge-icon" style="background:#5A6370;">
+                  <i class="fa-solid fa-map-pin"></i>
+                </div>
+                <span>关中探索者</span>
+              </div>
+              <div class="badge-item">
+                <div class="badge-icon locked">
+                  <i class="fa-solid fa-lock"></i>
+                </div>
+                <span>三秦走遍</span>
+              </div>
+              <div class="badge-item">
+                <div class="badge-icon locked">
+                  <i class="fa-solid fa-crown"></i>
+                </div>
+                <span>古建大师</span>
+              </div>
+              <div class="badge-item">
+                <div class="badge-icon locked">
+                  <i class="fa-solid fa-gem"></i>
+                </div>
+                <span>文化守护者</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Topic Vote -->
+          <div class="vote-card">
+            <h3><i class="fa-solid fa-poll"></i> 本周话题投票</h3>
+            <p class="vote-question">下一个探索目的地？</p>
+            <div class="vote-options">
+              <button class="vote-option">
+                <span class="option-text">华山古建筑群</span>
+                <span class="option-percent">42%</span>
+                <div class="option-bar" style="width:42%;"></div>
+              </button>
+              <button class="vote-option">
+                <span class="option-text">陕北窑洞民居</span>
+                <span class="option-percent">33%</span>
+                <div class="option-bar" style="width:33%;"></div>
+              </button>
+              <button class="vote-option">
+                <span class="option-text">汉中南湖古建</span>
+                <span class="option-percent">25%</span>
+                <div class="option-bar" style="width:25%;"></div>
+              </button>
+            </div>
+            <span class="vote-hint">参与投票可获得10积分</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+      <div class="modal-header">
+        <div style="width:48px;height:48px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 16px;"><i class="fa-solid fa-user"></i></div>
+        <h3>欢迎归来</h3>
+        <p>登录后畅享社区功能</p>
+      </div>
+      <form class="modal-form" onsubmit="handleLogin(event)">
+        <div class="form-group"><label>账号</label><input type="text" id="loginAccount" placeholder="手机号 / 邮箱" required></div>
+        <div class="form-group"><label>密码</label><input type="password" id="loginPassword" placeholder="请输入密码" required></div>
+        <button type="submit" class="modal-submit">登 录</button>
+        <div class="modal-footer"><span>还没有账号？<a href="#" onclick="switchModal('loginModal','registerModal');return false;">立即注册</a></span></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal-overlay" id="registerModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+      <div class="modal-header">
+        <div style="width:48px;height:48px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 16px;"><i class="fa-solid fa-user-plus"></i></div>
+        <h3>加入寻踪</h3>
+        <p>注册账号，与同好共探古建</p>
+      </div>
+      <form class="modal-form" onsubmit="handleRegister(event)">
+        <div class="form-group"><label>昵称</label><input type="text" id="regNickname" placeholder="请输入昵称" required></div>
+        <div class="form-group"><label>手机号</label><input type="tel" id="regPhone" placeholder="请输入手机号" required></div>
+        <div class="form-group"><label>密码</label><input type="password" id="regPassword" placeholder="请设置密码（至少6位）" minlength="6" required></div>
+        <div class="form-group"><label>确认密码</label><input type="password" id="regPassword2" placeholder="请再次输入密码" required></div>
+        <button type="submit" class="modal-submit">注 册</button>
+        <div class="modal-footer"><span>已有账号？<a href="#" onclick="switchModal('registerModal','loginModal');return false;">立即登录</a></span></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Note Modal -->
+  <div class="modal-overlay" id="noteModal">
+    <div class="modal-box" style="width:560px;max-width:95vw;">
+      <button class="modal-close" onclick="closeModal('noteModal')">&times;</button>
+      <div class="modal-header"><h3><i class="fa-solid fa-pen-to-square" style="color:var(--primary);"></i> 发布笔记</h3><p>分享你的古建探索心得</p></div>
+      <form class="modal-form" onsubmit="handlePublishNote(event)">
+        <div class="form-group"><label>标题</label><input type="text" id="noteTitle" placeholder="给你的笔记起个标题" required></div>
+        <div class="form-group"><label>内容</label><textarea id="noteContent" rows="5" placeholder="分享你的古建探索经历、感受..." required style="width:100%;padding:12px;border:1px solid rgba(185,151,91,0.3);border-radius:4px;font-family:inherit;resize:vertical;"></textarea></div>
+        <div class="form-group"><label>标签</label><input type="text" id="noteTags" placeholder="如：西安城墙, 大雁塔, 唐代建筑（用逗号分隔）"></div>
+        <div class="form-group"><label>上传图片</label><input type="file" id="noteImages" accept="image/*" multiple onchange="previewNoteImages(this)"><div id="noteImagePreview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div></div>
+        <button type="submit" class="modal-submit">发 布</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Upload Image Modal -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('uploadModal')">&times;</button>
+      <div class="modal-header"><h3><i class="fa-solid fa-image" style="color:var(--primary);"></i> 上传古建影像</h3><p>补充和分享古建筑的精美照片</p></div>
+      <form class="modal-form" onsubmit="handleUpload(event)">
+        <div class="form-group"><label>选择图片</label><input type="file" id="uploadFile" accept="image/*" multiple required onchange="previewUpload(this)"><div id="uploadPreview" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"></div></div>
+        <div class="form-group"><label>古建筑名称</label><input type="text" id="uploadBuilding" placeholder="如：西安城墙" required></div>
+        <div class="form-group"><label>拍摄地点</label><input type="text" id="uploadLocation" placeholder="具体拍摄位置"></div>
+        <div class="form-group"><label>描述</label><textarea id="uploadDesc" rows="3" placeholder="简要描述这张照片..." style="width:100%;padding:12px;border:1px solid rgba(185,151,91,0.3);border-radius:4px;font-family:inherit;resize:vertical;"></textarea></div>
+        <button type="submit" class="modal-submit">上 传</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Check-in Modal -->
+  <div class="modal-overlay" id="checkinModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('checkinModal')">&times;</button>
+      <div class="modal-header"><h3><i class="fa-solid fa-location-dot" style="color:var(--primary);"></i> 数字打卡</h3><p>在古建筑现场完成打卡</p></div>
+      <form class="modal-form" onsubmit="handleCheckin(event)">
+        <div class="form-group"><label>选择打卡地点</label><select id="checkinSpot" required style="width:100%;padding:12px;border:1px solid rgba(185,151,91,0.3);border-radius:4px;font-family:inherit;background:#fff;">
+          <option value="">请选择打卡地点</option>
+          <option value="西安城墙">西安城墙</option>
+          <option value="大雁塔">大雁塔</option>
+          <option value="小雁塔">小雁塔</option>
+          <option value="西安钟楼">西安钟楼</option>
+          <option value="鼓楼">鼓楼</option>
+          <option value="法门寺">法门寺</option>
+          <option value="韩城文庙">韩城文庙</option>
+          <option value="玉华宫遗址">玉华宫遗址</option>
+        </select></div>
+        <div class="form-group"><label>打卡感受</label><textarea id="checkinFeel" rows="3" placeholder="分享你的打卡感受..." style="width:100%;padding:12px;border:1px solid rgba(185,151,91,0.3);border-radius:4px;font-family:inherit;resize:vertical;"></textarea></div>
+        <div class="form-group"><label>上传现场照片</label><input type="file" id="checkinPhoto" accept="image/*" onchange="previewCheckin(this)"><div id="checkinPreview" style="margin-top:10px;"></div></div>
+        <button type="submit" class="modal-submit">完 成 打 卡</button>
+      </form>
+    </div>
+  </div>
+
+  <style>
+  /* Modal Styles */
+  .modal-overlay { position:fixed; inset:0; background:rgba(26,18,8,0.5); backdrop-filter:blur(6px); z-index:2000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
+  .modal-overlay.active { opacity:1; pointer-events:auto; }
+  .modal-box { background:#fff; border-radius:12px; width:420px; max-width:90vw; padding:32px; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.15); transform:translateY(16px); transition:transform 0.3s ease; border:1px solid rgba(185,151,91,0.15); }
+  .modal-overlay.active .modal-box { transform:translateY(0); }
+  .modal-close { position:absolute; top:12px; right:16px; background:none; border:none; font-size:22px; color:var(--ink-lighter); cursor:pointer; transition:color 0.3s; }
+  .modal-close:hover { color:var(--primary); }
+  .modal-header { text-align:center; margin-bottom:24px; }
+  .modal-header h3 { font-size:18px; letter-spacing:2px; color:var(--ink); margin-bottom:4px; }
+  .modal-header p { font-size:12px; color:var(--ink-lighter); }
+  .modal-form .form-group { margin-bottom:14px; }
+  .modal-form label { display:block; font-size:12px; color:var(--ink); margin-bottom:5px; font-weight:500; }
+  .modal-form input, .modal-form select { width:100%; padding:10px 12px; border:1px solid rgba(185,151,91,0.25); border-radius:6px; font-size:13px; font-family:inherit; color:var(--ink); transition:border-color 0.3s,box-shadow 0.3s; }
+  .modal-form input:focus, .modal-form select:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(185,151,91,0.08); }
+  .modal-submit { width:100%; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:6px; font-family:inherit; font-size:14px; letter-spacing:3px; cursor:pointer; transition:background 0.3s; margin-top:4px; }
+  .modal-submit:hover { background:var(--primary-light); }
+  .modal-footer { text-align:center; margin-top:14px; font-size:12px; color:var(--ink-lighter); }
+  .modal-footer a { color:var(--primary); text-decoration:none; }
+
+  /* Toast */
+  .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-20px); background:var(--ink); color:#fff; padding:12px 28px; border-radius:6px; font-size:13px; z-index:3000; opacity:0; pointer-events:none; transition:all 0.35s ease; box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+
+  <!-- JavaScript -->
+  <script>
+    // ========== Modal System ==========
+    function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow='hidden'; }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow=''; }
+    function switchModal(from, to) { closeModal(from); setTimeout(()=>openModal(to), 180); }
+    document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) closeModal(o.id); }));
+
+    // ========== Toast ==========
+    function showToast(msg) {
+      let t = document.getElementById('globalToast');
+      if(!t){ t=document.createElement('div'); t.id='globalToast'; t.className='toast'; document.body.appendChild(t); }
+      t.textContent=msg; t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'), 2500);
+    }
+
+    // ========== Auth ==========
+    let currentUser = null;
+    function handleLogin(e) {
+      e.preventDefault();
+      const acc = document.getElementById('loginAccount').value;
+      currentUser = acc;
+      closeModal('loginModal');
+      showToast('登录成功！欢迎回来，' + acc);
+      updateNavForUser(acc);
+    }
+    function handleRegister(e) {
+      e.preventDefault();
+      const nick = document.getElementById('regNickname').value;
+      const p1 = document.getElementById('regPassword').value;
+      const p2 = document.getElementById('regPassword2').value;
+      if(p1!==p2){ showToast('两次密码不一致'); return; }
+      currentUser = nick;
+      closeModal('registerModal');
+      showToast('注册成功！欢迎加入，' + nick);
+      updateNavForUser(nick);
+    }
+    function updateNavForUser(name) {
+      const na = document.querySelector('.header .nav-actions');
+      if(na) na.innerHTML = `<span style="font-size:13px;color:var(--ink);"><i class="fa-solid fa-user" style="color:var(--gold);margin-right:4px;"></i>${name}</span><a href="#" class="btn-nav btn-nav-ghost" style="padding:6px 14px;font-size:12px;" onclick="logout();return false;">退出</a>`;
+    }
+    function logout() {
+      currentUser = null;
+      const na = document.querySelector('.header .nav-actions');
+      if(na) na.innerHTML = `<a href="#" class="btn-nav btn-nav-ghost" onclick="openModal('loginModal');return false;">登录</a><a href="#" class="btn-nav btn-nav-primary" onclick="openModal('registerModal');return false;">注册</a>`;
+      showToast('已退出登录');
+    }
+
+    // ========== Publish Note ==========
+    function handlePublishNote(e) {
+      e.preventDefault();
+      const title = document.getElementById('noteTitle').value;
+      const content = document.getElementById('noteContent').value;
+      const tags = document.getElementById('noteTags').value.split(',').filter(t=>t.trim()).map(t=>`<span class="tag">${t.trim()}</span>`).join('');
+      const previewDiv = document.getElementById('noteImagePreview');
+      const hasImages = previewDiv && previewDiv.children.length > 0;
+      
+      const noteHtml = `
+        <div class="note-card" style="animation:fadeInUp 0.5s ease;">
+          <div class="note-header">
+            <div class="user-avatar" style="background:var(--primary);color:#fff;"><i class="fa-solid fa-user"></i></div>
+            <div class="user-info"><span class="username">${currentUser || '我'}</span><span class="time">刚刚</span></div>
+            <div class="note-tags">${tags}</div>
+          </div>
+          <h4 class="note-title">${title}</h4>
+          <p class="note-content">${content}</p>
+          ${hasImages ? `<div class="note-images">${Array.from(previewDiv.children).map(img=>`<div class="note-img">${img.outerHTML}</div>`).join('')}</div>` : ''}
+          <div class="note-actions">
+            <button class="action" onclick="this.classList.toggle('liked');const s=this.querySelector('span');s.textContent=parseInt(s.textContent||0)+(this.classList.contains('liked')?1:-1)"><i class="fa-solid fa-heart"></i> <span>0</span></button>
+            <button class="action"><i class="fa-solid fa-comment"></i> <span>0</span></button>
+            <button class="action"><i class="fa-solid fa-share"></i> <span>分享</span></button>
+            <button class="action"><i class="fa-solid fa-bookmark"></i> <span>收藏</span></button>
+          </div>
+        </div>`;
+      
+      const container = document.querySelector('.main-panel');
+      if(container) {
+        const temp = document.createElement('div'); temp.innerHTML = noteHtml;
+        container.insertBefore(temp.firstElementChild, container.children[1]);
+      }
+      closeModal('noteModal');
+      showToast('笔记发布成功！');
+      e.target.reset();
+      previewDiv.innerHTML = '';
+    }
+    function previewNoteImages(input) {
+      const preview = document.getElementById('noteImagePreview');
+      preview.innerHTML = '';
+      Array.from(input.files).forEach(file=>{
+        const reader = new FileReader();
+        reader.onload = e=>{ const img=document.createElement('img'); img.src=e.target.result; img.style.cssText='width:64px;height:64px;object-fit:cover;border-radius:4px;border:1px solid rgba(185,151,91,0.2);'; preview.appendChild(img); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ========== Upload Image ==========
+    function handleUpload(e) {
+      e.preventDefault();
+      closeModal('uploadModal');
+      showToast('影像上传成功！已提交审核');
+      e.target.reset();
+      document.getElementById('uploadPreview').innerHTML = '';
+    }
+    function previewUpload(input) {
+      const preview = document.getElementById('uploadPreview');
+      preview.innerHTML = '';
+      Array.from(input.files).forEach(file=>{
+        const reader = new FileReader();
+        reader.onload = e=>{ const img=document.createElement('img'); img.src=e.target.result; img.style.cssText='width:64px;height:64px;object-fit:cover;border-radius:4px;'; preview.appendChild(img); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ========== Check-in ==========
+    function handleCheckin(e) {
+      e.preventDefault();
+      const spot = document.getElementById('checkinSpot').value;
+      closeModal('checkinModal');
+      showToast('在「' + spot + '」打卡成功！积分+10');
+      e.target.reset();
+      document.getElementById('checkinPreview').innerHTML = '';
+    }
+    function previewCheckin(input) {
+      const preview = document.getElementById('checkinPreview');
+      if(input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e=>{ preview.innerHTML = `<img src="${e.target.result}" style="width:100%;max-height:160px;object-fit:cover;border-radius:6px;">`; };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // ========== Tab switching ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const contents = document.querySelectorAll('.tab-content');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const targetTab = tab.dataset.tab;
+          tabs.forEach(t => t.classList.remove('active'));
+          contents.forEach(c => c.classList.remove('active'));
+          tab.classList.add('active');
+          const targetContent = document.getElementById(`${targetTab}Tab`);
+          if (targetContent) targetContent.classList.add('active');
+        });
+      });
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const tab = document.querySelector(`[data-tab="${hash}"]`);
+        if (tab) tab.click();
+      }
+
+      // Bind create note button
+      const cnb = document.getElementById('createNoteBtn');
+      if(cnb) cnb.addEventListener('click', ()=>openModal('noteModal'));
+
+      // Bind upload cards
+      document.querySelectorAll('.upload-card').forEach((card, idx)=>{
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', ()=>{
+          if(idx===0) openModal('uploadModal');
+          else if(idx===1) showToast('纠错功能开发中，敬请期待');
+          else if(idx===2) showToast('评分功能开发中，敬请期待');
+        });
+      });
+
+      // Bind city markers for checkin
+      document.querySelectorAll('.city-marker').forEach(marker=>{
+        marker.style.cursor = 'pointer';
+        marker.addEventListener('click', ()=>{
+          if(!currentUser) { openModal('loginModal'); return; }
+          openModal('checkinModal');
+        });
+      });
+
+      // Bind vote options
+      document.querySelectorAll('.vote-option').forEach(opt=>{
+        opt.addEventListener('click', function(){
+          if(!currentUser) { openModal('loginModal'); return; }
+          document.querySelectorAll('.vote-option').forEach(o=>o.style.borderColor='transparent');
+          this.style.borderColor = 'var(--primary)';
+          showToast('投票成功！积分+10');
+        });
+      });
+
+      // Note actions: like toggle
+      document.querySelectorAll('.note-actions .action').forEach(btn=>{
+        if(btn.innerHTML.includes('fa-heart')) {
+          btn.addEventListener('click', function(){
+            this.classList.toggle('liked');
+            const span = this.querySelector('span');
+            let n = parseInt(span.textContent)||0;
+            span.textContent = this.classList.contains('liked') ? n+1 : Math.max(0,n-1);
+            if(this.classList.contains('liked')) this.style.color='var(--primary)';
+            else this.style.color='';
+          });
+        }
+      });
+    });
+
+    // Animation keyframes injection
+    const style = document.createElement('style');
+    style.textContent = '@keyframes fadeInUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}';
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

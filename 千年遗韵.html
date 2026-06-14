@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>千年遗韵 · 古建主题路线 | 秦韵古建</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+/* ============================================================
+   CSS VARIABLES & RESET
+   ============================================================ */
+:root {
+  --red:       #8A2E2E;
+  --red-dark:  #6B1F1F;
+  --red-light: #A84040;
+  --gold:      #B9975B;
+  --gold-light:#D4B478;
+  --gold-pale: #ECD9A8;
+  --ink:       #3D434A;
+  --ink-light: #5A6370;
+  --paper:     #F5F1E8;
+  --paper-dark:#EDE7D4;
+  --paper-deep:#E2D9C2;
+  --white:     #FDFAF3;
+  --shadow:    rgba(61,67,74,0.18);
+  --ff-serif:  'Noto Serif SC', serif;
+  --ff-sans:   'Noto Sans SC', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--ff-serif);
+  background-color: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Paper texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--paper-deep); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+/* ============================================================
+   TOP NAVIGATION - 仿照山河筑迹风格
+   ============================================================ */
+#topbar{
+  position:fixed;inset:0 0 auto 0;height:56px;z-index:1200;
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+  background:#FFFFFF;
+  border-top:1px solid var(--gold);
+  border-bottom:1px solid var(--gold);
+  box-shadow:0 4px 14px rgba(96,74,40,.10);
+}
+
+.nav-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 13px;border-radius:4px;
+  background:var(--red);color:#fff;font-size:13px;
+  border:1px solid var(--gold);
+  cursor:pointer;transition:all .3s;letter-spacing:.05em;text-decoration:none;
+  box-shadow:0 2px 6px rgba(158,61,45,.22);
+}
+.nav-btn:hover{background:#8B3326;border-color:var(--gold);color:#fff}
+
+#site-title{
+  position:absolute;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:11px;user-select:none;white-space:nowrap;
+}
+#site-title h1{
+  margin:0;font-family:var(--ff-serif);font-size:23px;font-weight:700;
+  letter-spacing:.32em;text-indent:.32em;color:#A8861D;
+  display:flex;align-items:center;gap:14px;
+}
+/* 标题两侧的极简回纹装饰(金色) */
+#site-title h1::before,#site-title h1::after{
+  content:"";width:58px;height:10px;flex:none;opacity:.85;
+  background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='10'%3E%3Cpath d='M1 9V1h12v5H7V4' fill='none' stroke='%23D4AF37' stroke-width='1.2'/%3E%3C/svg%3E") repeat-x left center;
+}
+#site-title h1::after{transform:scaleX(-1)}
+
+/* ============================================================
+   SECTION COMMON
+   ============================================================ */
+.section {
+  padding: 90px 4vw 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 6px;
+  margin-bottom: 16px;
+}
+
+.section-title::before,
+.section-title::after {
+  content: ' — ';
+  color: var(--gold);
+}
+
+.gold-line {
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto;
+}
+
+/* ============================================================
+   ROUTE CARDS GRID - 两行四列布局
+   ============================================================ */
+.routes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.route-card {
+  background: var(--white);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px var(--shadow);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+
+.route-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(138,46,46,0.2);
+}
+
+.route-card-img {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.route-card-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.route-card:hover .route-card-img img {
+  transform: scale(1.08);
+}
+
+.route-card-img .dynasty-tag {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--red);
+  color: #fff;
+  font-size: 12px;
+  font-family: var(--ff-sans);
+  padding: 4px 12px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+}
+
+.route-card-img .theme-tag {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: rgba(245,241,232,0.9);
+  color: var(--ink);
+  font-size: 11px;
+  font-family: var(--ff-sans);
+  padding: 4px 10px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+}
+
+.route-card-body {
+  padding: 24px;
+}
+
+.route-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.route-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--ink-light);
+  font-family: var(--ff-sans);
+}
+
+.route-card-meta i {
+  color: var(--gold);
+  margin-right: 4px;
+}
+
+.route-card-spots {
+  margin-bottom: 12px;
+}
+
+.route-card-spots-title {
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  font-family: var(--ff-sans);
+}
+
+.route-card-spots-list {
+  font-size: 14px;
+  color: var(--ink-light);
+  line-height: 1.6;
+}
+
+.route-card-desc {
+  font-size: 14px;
+  color: var(--ink-light);
+  line-height: 1.8;
+  margin-bottom: 20px;
+  border-left: 2px solid var(--gold);
+  padding-left: 12px;
+}
+
+.route-card-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--ff-serif);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.route-card-btn:hover {
+  background: var(--red-dark);
+}
+
+/* ============================================================
+   ROUTE DETAIL MODAL
+   ============================================================ */
+.route-detail-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+
+.route-detail-modal.active {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.route-detail {
+  background: var(--white);
+  max-width: 800px;
+  width: 100%;
+  margin: 40px auto;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  position: relative;
+  animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.route-detail-header {
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+  color: #fff;
+  padding: 32px 40px;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+}
+
+.route-detail-header h2 {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+}
+
+.route-detail-header .overview {
+  font-size: 14px;
+  font-family: var(--ff-sans);
+  opacity: 0.85;
+  letter-spacing: 1px;
+}
+
+.route-detail-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.route-detail-close:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.route-detail-body {
+  padding: 40px;
+}
+
+.route-detail h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 2px;
+  margin: 28px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold);
+  display: inline-block;
+}
+
+.route-detail h3:first-child {
+  margin-top: 0;
+}
+
+.route-detail ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.route-detail ul li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 12px;
+  line-height: 1.8;
+}
+
+.route-detail ul li::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 10px;
+  top: 6px;
+}
+
+.route-detail ul li strong {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.route-detail p {
+  line-height: 1.8;
+  color: var(--ink-light);
+  margin-bottom: 16px;
+}
+
+.route-detail p em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.route-detail-note {
+  background: linear-gradient(135deg, rgba(185,151,91,0.1) 0%, rgba(185,151,91,0.05) 100%);
+  border-left: 4px solid var(--gold);
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+.route-detail-note p {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.route-detail交通 p,
+.route-detail贴士 p {
+  background: var(--paper);
+  padding: 16px 20px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.favorite-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  margin-top: 32px;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: var(--ff-serif);
+  font-size: 15px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.favorite-btn:hover {
+  background: var(--gold-light);
+}
+
+/* ============================================================
+   FEATURED SECTION
+   ============================================================ */
+.featured-section {
+  background: linear-gradient(135deg, var(--paper-dark) 0%, var(--paper-deep) 100%);
+  padding: 60px 4vw;
+  margin: 40px 0;
+}
+
+.featured-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.featured-text {
+  flex: 1;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.featured-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+}
+
+.featured-title::before {
+  content: '◆ ';
+  color: var(--gold);
+}
+
+.featured-desc {
+  font-size: 15px;
+  color: var(--ink-light);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.featured-btn {
+  display: inline-block;
+  padding: 12px 32px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--ff-serif);
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.featured-btn:hover {
+  background: var(--red-dark);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 60px 4vw 30px;
+}
+
+.footer-top {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(185,151,91,0.2);
+}
+
+.footer-brand .brand-name {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--gold-pale);
+  margin-bottom: 8px;
+}
+
+.footer-brand .brand-sub {
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.footer-brand p {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(245,241,232,0.3);
+  line-height: 1.8;
+}
+
+.footer-links h4 {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  color: var(--gold-pale);
+  margin-bottom: 16px;
+}
+
+.footer-links ul {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: rgba(245,241,232,0.6);
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+}
+
+.footer-bottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: rgba(245,241,232,0.4);
+  letter-spacing: 2px;
+}
+
+/* ============================================================
+   TOAST NOTIFICATION
+   ============================================================ */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 16px 32px;
+  border-radius: 4px;
+  font-family: var(--ff-sans);
+  font-size: 14px;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  z-index: 9999;
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1200px) {
+  .routes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .routes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  /* 导航栏响应式 */
+  #site-title h1 {
+    font-size: 18px;
+    letter-spacing: .2em;
+  }
+  #site-title h1::before, #site-title h1::after {
+    width: 30px;
+  }
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .routes-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .section {
+    padding: 80px 4vw 60px;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  /* Route Detail Modal Responsive */
+  .route-detail-modal {
+    padding: 20px 10px;
+  }
+  
+  .route-detail {
+    margin: 20px auto;
+    border-radius: 6px;
+  }
+  
+  .route-detail-header {
+    padding: 24px 20px;
+  }
+  
+  .route-detail-header h2 {
+    font-size: 20px;
+    padding-right: 40px;
+  }
+  
+  .route-detail-header .overview {
+    font-size: 12px;
+  }
+  
+  .route-detail-body {
+    padding: 24px 20px;
+  }
+  
+  .route-detail h3 {
+    font-size: 16px;
+    margin: 20px 0 12px;
+  }
+  
+  .route-detail ul li {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  
+  .route-detail p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  
+  .favorite-btn {
+    font-size: 14px;
+    padding: 12px 20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     TOP NAVIGATION - 仿照山河筑迹风格
+     ============================================================ -->
+<header id="topbar">
+  <!-- 左侧：返回首页按钮 -->
+  <a href="陕西古建筑旅游信息平台.html" class="nav-btn" title="返回首页">
+    <span>返回首页</span>
+  </a>
+  
+  <!-- 中间：页面标题 -->
+  <div id="site-title">
+    <h1>千年遗韵</h1>
+  </div>
+</header></function></seed:tool_call>
+
+
+<!-- ============================================================
+     ROUTES SECTION
+     ============================================================ -->
+<section class="section" id="routesSection">
+  <div class="section-header">
+    <h2 class="section-title">古建主题路线</h2>
+    <div class="gold-line"></div>
+  </div>
+  
+  <div class="routes-grid" id="routesGrid">
+    <!-- Routes will be generated by JavaScript -->
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ROUTE DETAIL MODAL
+     ============================================================ -->
+<div class="route-detail-modal" id="routeDetailModal">
+  <div class="route-detail" id="routeDetail">
+    <div class="route-detail-header">
+      <button class="route-detail-close" onclick="closeRouteDetail()">&times;</button>
+      <h2 id="detailTitle">唐风遗构 · 佛塔巡礼</h2>
+      <div class="overview" id="detailOverview">建议时长：1日 | 最佳季节：春季、秋季 | 出行方式：地铁+公交+步行</div>
+    </div>
+    <div class="route-detail-body" id="detailBody">
+      <div id="detailItinerary"></div>
+      <div id="detailTransport"></div>
+      <div id="detailTips"></div>
+      <div id="detailExtension"></div>
+      <button class="favorite-btn" onclick="handleFavorite()">🔖 登录后收藏本路线</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- ============================================================
+     TOAST NOTIFICATION
+     ============================================================ -->
+<div class="toast" id="toast"></div>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ============================================================
+// ROUTE DATA
+// ============================================================
+const routesData = [
+  {
+    id: 1,
+    name: '唐风遗构 · 佛塔巡礼',
+    dynasty: '唐',
+    days: '1日',
+    spots: ['大雁塔', '小雁塔', '香积寺善导塔', '兴教寺塔', '华严寺塔'],
+    desc: '追寻长安城中仅存的唐代佛教建筑遗存，从砖塔形制到净土宗祖庭。',
+    image: 'mysite/背景2.jpg',
+    tag: '唐风·佛塔'
+  },
+  {
+    id: 2,
+    name: '帝都气象 · 周秦汉唐',
+    dynasty: '周至唐',
+    days: '2日',
+    spots: ['西安城墙', '钟鼓楼', '汉长安城遗址', '大明宫遗址', '大唐不夜城·开元广场'],
+    desc: '从西周丰镐到唐长安城，沿城市中轴线感受历代都城的营造规制。',
+    image: 'mysite/背景1.jpg',
+    tag: '都城·遗迹'
+  },
+  {
+    id: 3,
+    name: '渭北庄园 · 民居大观',
+    dynasty: '明清',
+    days: '2日',
+    spots: ['党家村', '姜氏庄园', '常氏庄园', '周氏民居', '唐家民宅'],
+    desc: '走进关中与陕北的深宅大院，解读砖雕、木雕、窑洞建筑中的家族记忆。',
+    image: 'mysite/背景4.jpg',
+    tag: '民居·庄园'
+  },
+  {
+    id: 4,
+    name: '西府佛国 · 祖庭朝圣',
+    dynasty: '唐至清',
+    days: '2日',
+    spots: ['法门寺', '周公庙', '金台观', '五丈原诸葛亮庙', '龙门洞'],
+    desc: '宝鸡地区佛教、道教宫观建筑群，感受信仰与营造艺术的交融。',
+    image: 'mysite/背景3.jpg',
+    tag: '宗教·祖庭'
+  },
+  {
+    id: 5,
+    name: '陕南蜀道 · 古镇栈道',
+    dynasty: '明清',
+    days: '2-3日',
+    spots: ['青木川古镇', '武侯祠', '张良庙', '石门栈道', '汉中东塔'],
+    desc: '秦巴山水间的古建与古道，体验南北交融的建筑风貌与蜀道文化。',
+    image: 'mysite/背景6.jpg',
+    tag: '古镇·栈道'
+  },
+  {
+    id: 6,
+    name: '陕北边塞 · 城堡与窑洞',
+    dynasty: '宋至清',
+    days: '2日',
+    spots: ['镇北台', '统万城', '米脂窑洞古城', '李自成行宫', '香炉寺'],
+    desc: '黄土高原上的军事防御建筑与生土营造智慧，感受边塞苍茫。',
+    image: 'mysite/背景5.jpg',
+    tag: '边塞·窑洞'
+  },
+  {
+    id: 7,
+    name: '韩城古建 · 元明清大观',
+    dynasty: '元明清',
+    days: '1-2日',
+    spots: ['韩城文庙', '城隍庙', '东营庙', '普照寺', '大禹庙'],
+    desc: '韩城保存完好的元明清建筑群，一览千年营造法式的演变。',
+    image: 'mysite/背景7.jpg',
+    tag: '元明·官式'
+  },
+  {
+    id: 8,
+    name: '关中塔影 · 古塔艺术',
+    dynasty: '唐宋金',
+    days: '1日',
+    spots: ['大秦寺塔', '鸠摩罗什舍利塔', '二龙塔', '崇寿寺塔', '慧照寺塔'],
+    desc: '专题寻访陕西境内不同时期的古塔，细观形制与雕刻艺术。',
+    image: 'mysite/背景8.jpg',
+    tag: '古塔·艺术'
+  }
+];
+
+// ============================================================
+// ROUTE DETAIL DATA (详细内容)
+// ============================================================
+const routesDetailData = {
+  0: { // 唐风遗构
+    title: '唐风遗构 · 佛塔巡礼',
+    overview: '建议时长：1日 | 最佳季节：春季、秋季 | 出行方式：地铁+公交+步行',
+    itinerary: `
+      <h3>📅 建议行程</h3>
+      <ul>
+        <li><strong>09:00-11:30 大雁塔（大慈恩寺）</strong><br>唐代四方楼阁式砖塔，玄奘译经处，可登塔俯瞰西安城。<br>开放时间参考：08:00-17:30（以景区公告为准） | 游览约2小时</li>
+        <li><strong>12:00-13:30 午餐</strong><br>大雁塔南广场周边（素斋、陕西风味）</li>
+        <li><strong>14:00-16:00 小雁塔（荐福寺）</strong><br>唐代密檐式砖塔，与西安博物院相连。<br>开放时间参考：09:00-17:00（周三或有免费政策，请提前查询） | 游览约1.5小时</li>
+        <li><strong>16:30-17:30 香积寺善导塔</strong><br>净土宗祖庭，唐代方形十三层密檐式砖塔。<br>开放时间参考：08:00-17:00 | 游览约1小时</li>
+      </ul>
+      <p><em>兴教寺塔、华严寺塔位于长安区较远，若完整寻访建议增加半日自驾。</em></p>
+    `,
+    transport: `
+      <h3>🚌 交通衔接</h3>
+      <p>大雁塔 → 小雁塔：地铁3号线至小雁塔站，约20分钟<br>小雁塔 → 香积寺：打车约35元，或乘公交173路至香积寺村站</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>大雁塔北广场音乐喷泉通常有12:00、16:00、19:00场次，建议出行前查询当日安排。</li>
+        <li>小雁塔如需预约，请关注"西安博物院"官方公众号。</li>
+        <li>香积寺周边餐饮较少，可自备饮水。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>兴教寺塔（玄奘舍利塔）、华严寺塔（杜顺塔）</p>
+    `
+  },
+  1: { // 帝都气象
+    title: '帝都气象 · 周秦汉唐',
+    overview: '建议时长：2日 | 最佳季节：四季皆宜 | 出行方式：地铁+公交+共享单车',
+    itinerary: `
+      <h3>📅 建议行程</h3>
+      <p><strong>Day 1</strong></p>
+      <ul>
+        <li><strong>09:00-12:00 西安城墙</strong><br>中国现存规模最大、保存最完整的古代城垣。推荐从永宁门上城墙，骑行或徒步。<br>开放时间参考：08:00-22:00 | 游览约2-3小时</li>
+        <li><strong>12:30-13:30 午餐</strong><br>钟楼附近（同盛祥、德发长等老字号）</li>
+        <li><strong>14:00-16:00 钟鼓楼</strong><br>明代建筑，钟楼与鼓楼遥相呼应，可登楼观看编钟表演。<br>开放时间参考：08:30-21:30 | 游览约2小时</li>
+        <li><strong>17:00-19:00 大唐不夜城·开元广场</strong><br>唐代风格步行街，仿唐建筑群及灯光秀，免费开放，晚间游览最佳。</li>
+      </ul>
+      <p><strong>Day 2</strong></p>
+      <ul>
+        <li><strong>09:00-11:30 汉长安城遗址（未央宫遗址）</strong><br>西汉都城遗址，世界文化遗产，免费开放，建议电瓶车游览。<br>开放时间参考：08:30-17:30 | 游览约2小时</li>
+        <li><strong>13:00-16:00 大明宫遗址公园</strong><br>唐长安城三大内之一，含元殿、丹凤门遗址。可乘坐园内小火车。<br>开放时间参考：08:30-18:00 | 游览约2.5小时</li>
+      </ul>
+    `,
+    transport: `
+      <h3>🚌 交通衔接</h3>
+      <p>城墙→钟鼓楼：步行约15分钟<br>钟鼓楼→汉长安城遗址：公交234路或地铁2号线转公交<br>汉长安城→大明宫：公交或打车约20分钟</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>西安城墙骑行全程约14公里，租车约45元/辆（价格仅供参考）。</li>
+        <li>大明宫遗址公园较大，建议乘坐电瓶车（约30元/人，以现场为准）。</li>
+        <li>汉长安城遗址区空旷，注意防晒补水。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>陕西历史博物馆（周秦汉唐文物精华）、小雁塔</p>
+    `
+  },
+  2: { // 渭北庄园
+    title: '渭北庄园 · 民居大观',
+    overview: '建议时长：2日 | 最佳季节：春、秋 | 出行方式：自驾（或包车）',
+    itinerary: `
+      <h3>📅 建议行程</h3>
+      <p><strong>Day 1</strong></p>
+      <ul>
+        <li><strong>09:00-12:30 党家村（韩城）</strong><br>明清民居建筑群，砖雕、木雕、石雕精美，被誉为"东方人类古代传统居住村寨活化石"。<br>开放时间参考：08:00-18:00 | 游览约3小时</li>
+        <li><strong>12:30-13:30 午餐</strong><br>党家村农家乐或韩城市区（韩城馄饨、羊肉饸饹）</li>
+        <li><strong>14:30-17:00 姜氏庄园（米脂）</strong><br>陕北窑洞四合院庄园，防御性强，有"西北第一庄"之称。<br>开放时间参考：09:00-17:00 | 游览约2小时</li>
+      </ul>
+      <p><strong>Day 2</strong></p>
+      <ul>
+        <li><strong>09:00-11:30 常氏庄园（米脂）</strong><br>清代窑洞式庄园，布局严谨，与姜氏庄园并称米脂双璧。<br>开放时间参考：09:00-17:00 | 游览约2小时</li>
+        <li><strong>13:00-15:30 周氏民居（凤翔）</strong><br>明代官宦宅院，现为凤翔周氏民俗博物馆。<br>开放时间参考：08:30-17:30 | 游览约1.5小时</li>
+        <li><strong>16:00-18:00 唐家民宅（旬邑）</strong><br>清代商宅建筑群，现为旬邑唐家民俗博物馆。<br>开放时间参考：09:00-17:00 | 游览约1.5小时</li>
+      </ul>
+      <p><em>周氏民居和唐家民宅较分散，若时间有限可任选1-2处。</em></p>
+    `,
+    transport: `
+      <h3>🚗 交通衔接</h3>
+      <p>党家村 → 姜氏庄园：自驾约2.5小时（京昆高速+榆蓝高速）<br>姜氏庄园 → 常氏庄园：自驾约30分钟<br>米脂→凤翔：自驾约4小时（建议分两天或优先选择米脂/韩城本地庄园）</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>党家村建议请讲解（约60元/次），可深入了解建筑文化。</li>
+        <li>陕北早晚温差大，注意携带外套。</li>
+        <li>各景点门票请以现场公示为准。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>韩城古城（文庙、城隍庙）、米脂窑洞古城、李自成行宫</p>
+    `
+  },
+  3: { // 西府佛国
+    title: '西府佛国 · 祖庭朝圣',
+    overview: '建议时长：2日 | 最佳季节：春、秋 | 出行方式：自驾（或高铁+包车）',
+    itinerary: `
+      <h3>📅 建议行程</h3>
+      <p><strong>Day 1</strong></p>
+      <ul>
+        <li><strong>08:30-12:30 法门寺（扶风）</strong><br>唐代皇家寺院，供奉佛指舍利，合十舍利塔、法门寺地宫、珍宝馆。<br>开放时间参考：08:30-17:00 | 游览约3.5小时</li>
+        <li><strong>12:30-13:30 午餐</strong><br>法门寺景区外或扶风县城（扶风一口香、醋粉）</li>
+        <li><strong>14:30-17:00 周公庙（岐山）</strong><br>纪念周公旦的庙宇，现存明清建筑群，有润德泉、碑林。<br>开放时间参考：08:00-18:00 | 游览约2小时</li>
+      </ul>
+      <p><strong>Day 2</strong></p>
+      <ul>
+        <li><strong>09:00-11:30 金台观（宝鸡市区）</strong><br>元代道观，张三丰修道处，可俯瞰宝鸡全景。<br>开放时间参考：08:00-18:00 | 游览约2小时</li>
+        <li><strong>12:00-13:30 午餐</strong><br>宝鸡市区（擀面皮、豆花泡馍）</li>
+        <li><strong>14:30-17:00 五丈原诸葛亮庙（岐山）</strong><br>纪念诸葛亮的祠庙，内有岳飞手书《出师表》石刻。<br>开放时间参考：08:00-18:00 | 游览约2小时</li>
+        <li><strong>可选：龙门洞（陇县）</strong><br>道教龙门派祖庭，悬崖洞窟建筑群，路途较远，建议单独一天。</li>
+      </ul>
+    `,
+    transport: `
+      <h3>🚗 交通衔接</h3>
+      <p>法门寺 → 周公庙：自驾约1小时<br>周公庙 → 金台观：自驾约40分钟<br>金台观 → 五丈原：自驾约1小时</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>法门寺合十舍利塔内佛指舍利通常在农历初一、十五及周六日展出，建议提前查询。</li>
+        <li>金台观位于市区北坡，适合傍晚前到达观景。</li>
+        <li>龙门洞道路多为山路，建议单独安排一整天或包车前往。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>宝鸡青铜器博物院、凤翔东湖（苏轼修建）</p>
+    `
+  },
+  4: { // 陕南蜀道
+    title: '陕南蜀道 · 古镇栈道',
+    overview: '建议时长：2-3日 | 最佳季节：春季、秋季 | 出行方式：自驾（最佳）或高铁+包车',
+    itinerary: `
+      <h3>📅 建议行程</h3>
+      <p><strong>Day 1</strong></p>
+      <ul>
+        <li><strong>09:00-12:00 青木川古镇（宁强）</strong><br>明清古镇，羌族风格建筑，魏氏宅院、回龙场老街。<br>开放时间参考：全天 | 游览约3小时</li>
+        <li><strong>12:00-13:00 午餐</strong><br>青木川古镇（木桶鱼、核桃馍）</li>
+        <li><strong>14:00-17:00 途中风光</strong><br>沿嘉陵江行驶，可停车拍照</li>
+        <li><strong>17:00-19:00 武侯祠（勉县）</strong><br>全国最早武侯祠，唐代建筑风格，有"天下第一武侯祠"之称。<br>开放时间参考：09:00-17:00 | 游览约1.5小时</li>
+      </ul>
+      <p><strong>Day 2</strong></p>
+      <ul>
+        <li><strong>09:00-11:30 张良庙（留坝）</strong><br>汉代留侯张良的祠庙，明清古建群，依山傍水，环境清幽。<br>开放时间参考：08:00-18:00 | 游览约2小时</li>
+        <li><strong>12:30-15:30 石门栈道（汉中市区北）</strong><br>古代褒斜道遗址，石门水库及摩崖石刻，可体验古栈道。<br>开放时间参考：08:30-17:00 | 游览约2.5小时</li>
+        <li><strong>16:00-17:30 汉中东塔（汉中市区）</strong><br>宋代方形密檐式砖塔，位于净明寺内。<br>开放时间参考：寺内有限开放 | 游览约40分钟</li>
+      </ul>
+    `,
+    transport: `
+      <h3>🚗 交通衔接</h3>
+      <p>青木川 → 勉县武侯祠：自驾约2.5小时<br>武侯祠 → 留坝张良庙：自驾约1.5小时<br>张良庙 → 石门栈道：自驾约1小时<br>石门栈道 → 汉中东塔：自驾约30分钟</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>青木川古镇建议住宿一晚，清晨和傍晚游客较少。</li>
+        <li>石门栈道景区内有玻璃栈道，恐高者慎选。</li>
+        <li>陕南多雨，携带雨具及防滑鞋。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>汉中市博物馆（古汉台）、拜将台、褒斜道陈列馆</p>
+    `
+  },
+  5: { // 陕北边塞
+    title: '陕北边塞 · 城堡与窑洞',
+    overview: '建议时长：2日 | 最佳季节：5-10月 | 出行方式：自驾（建议SUV）',
+    itinerary: `
+      <h3>📅 建议行程</h3>
+      <p><strong>Day 1</strong></p>
+      <ul>
+        <li><strong>08:30-11:30 镇北台（榆林市区北）</strong><br>明代长城重要关隘，"万里长城第一台"，可远眺毛乌素沙漠。<br>开放时间参考：08:00-17:30 | 游览约2小时</li>
+        <li><strong>12:00-13:00 午餐</strong><br>榆林市区（羊杂碎、拼三鲜）</li>
+        <li><strong>14:30-17:30 统万城（靖边县北）</strong><br>东晋十六国匈奴赫连勃勃所建都城，白色夯土城垣，遗址壮观。<br>开放时间参考：08:30-17:30（需乘摆渡车） | 游览约2.5小时</li>
+      </ul>
+      <p><strong>Day 2</strong></p>
+      <ul>
+        <li><strong>09:00-12:00 米脂窑洞古城</strong><br>保存完好的明清窑洞聚落，"陕北小北京"，可参观窑洞民居。<br>开放时间参考：全天 | 免费 | 游览约2小时</li>
+        <li><strong>12:30-13:30 午餐</strong><br>米脂县城（驴板肠、油馍馍）</li>
+        <li><strong>14:00-16:00 李自成行宫（米脂）</strong><br>明代建筑群，李自成曾居住，现为米脂博物馆。<br>开放时间参考：08:30-17:00 | 游览约1.5小时</li>
+        <li><strong>16:30-18:00 香炉寺（佳县）</strong><br>明代寺庙，建于黄河岸边巨石之上，三面悬空，日落时景观壮美。<br>开放时间参考：08:00-18:00 | 游览约1小时</li>
+      </ul>
+    `,
+    transport: `
+      <h3>🚗 交通衔接</h3>
+      <p>榆林 → 统万城：自驾约1.5小时<br>统万城 → 米脂：自驾约2小时<br>米脂 → 佳县香炉寺：自驾约1.5小时</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>统万城遗址无遮挡，注意防晒、备足饮水。</li>
+        <li>香炉寺最佳观赏时间为日落前1小时，可拍黄河夕照。</li>
+        <li>陕北风沙较大，建议携带墨镜、面巾。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>红石峡（榆林，摩崖石刻）、波浪谷（靖边，丹霞）、赤牛坬（民俗村）</p>
+    `
+  },
+  6: { // 韩城古建
+    title: '韩城古建 · 元明清大观',
+    overview: '建议时长：1-2日 | 最佳季节：春、秋 | 出行方式：高铁+公交/步行',
+    itinerary: `
+      <h3>📅 建议行程（一日紧凑版）</h3>
+      <ul>
+        <li><strong>09:00-10:30 韩城文庙</strong><br>元代建筑，韩城博物馆所在地，碑林与古柏相映。<br>开放时间参考：08:00-18:00 | 游览约1.5小时</li>
+        <li><strong>10:45-12:00 韩城城隍庙</strong><br>明代建筑，琉璃屋顶精美，与文庙相邻。<br>开放时间参考：08:00-18:00 | 游览约1小时</li>
+        <li><strong>12:00-13:00 午餐</strong><br>韩城古城美食街（羊肉饸饹、韩城馄饨）</li>
+        <li><strong>13:30-15:00 东营庙</strong><br>明代关帝庙，木雕、砖雕工艺精湛。<br>开放时间参考：08:00-18:00 | 游览约1小时</li>
+        <li><strong>15:30-17:30 普照寺</strong><br>元代佛教建筑，保存有元代彩塑，为韩城元代建筑代表。<br>开放时间参考：08:30-17:30 | 游览约1.5小时</li>
+        <li><strong>18:00-19:00 大禹庙</strong><br>元代建筑，供奉大禹，内有明代壁画。<br>开放时间参考：08:30-17:30 | 游览约1小时</li>
+      </ul>
+      <p><em>若时间充裕，可分两天游玩，增加党家村或司马迁祠。</em></p>
+    `,
+    transport: `
+      <h3>🚌 交通衔接</h3>
+      <p>文庙、城隍庙、东营庙均在韩城古城内，步行可达。<br>古城 → 普照寺：公交或打车约15分钟<br>普照寺 → 大禹庙：打车约10分钟</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>韩城古城内景点集中，建议穿平底鞋。</li>
+        <li>普照寺下午光线较好，适合拍摄建筑细节。</li>
+        <li>若自驾，可顺路前往司马迁祠（约15分钟车程）。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>党家村、司马迁祠墓、黄河龙门渡口</p>
+    `
+  },
+  7: { // 关中塔影
+    title: '关中塔影 · 古塔艺术',
+    overview: '建议时长：1日 | 最佳季节：春季、秋季 | 出行方式：自驾（塔点分散）',
+    itinerary: `
+      <h3>📅 建议行程</h3>
+      <ul>
+        <li><strong>08:30-10:00 大秦寺塔（周至）</strong><br>宋代八角七层楼阁式砖塔，曾为景教寺院，塔体雕刻精美。<br>开放时间参考：全天（外围） | 游览约1小时</li>
+        <li><strong>10:30-12:00 鸠摩罗什舍利塔（户县草堂寺）</strong><br>唐代八角形亭阁式石塔，八色玉石雕刻。<br>开放时间参考：08:00-17:00 | 游览约1.5小时</li>
+        <li><strong>12:30-13:30 午餐</strong><br>草堂寺周边或户县城区（户县软面）</li>
+        <li><strong>14:00-15:30 二龙塔（长安区）</strong><br>唐代密檐式砖塔，位于少陵原上，四方形，风格古朴。<br>开放时间参考：全天（野外） | 游览约1小时</li>
+        <li><strong>16:00-17:30 崇寿寺塔（蒲城）</strong><br>宋代方形十三层密檐式砖塔，为蒲城标志。<br>开放时间参考：全天 | 游览约1小时</li>
+        <li><strong>18:00-19:00 慧照寺塔（渭南临渭区）</strong><br>唐代方形楼阁式砖塔，位于下邽镇。<br>开放时间参考：全天 | 游览约40分钟</li>
+      </ul>
+    `,
+    transport: `
+      <h3>🚗 交通衔接</h3>
+      <p>大秦寺塔 → 草堂寺：自驾约40分钟<br>草堂寺 → 二龙塔：自驾约1小时<br>二龙塔 → 崇寿寺塔：自驾约1.5小时<br>崇寿寺塔 → 慧照寺塔：自驾约30分钟</p>
+    `,
+    tips: `
+      <h3>💡 游览贴士</h3>
+      <ul>
+        <li>大秦寺塔、二龙塔均在野外，注意导航准确，部分路段较窄。</li>
+        <li>崇寿寺塔位于蒲城县城内，周边有停车场。</li>
+        <li>慧照寺塔位于下邽镇街道旁，无专门停车场，可路边临时停靠。</li>
+        <li>建议早出发，避免天黑赶路。</li>
+      </ul>
+    `,
+    extension: `
+      <h3>🏛 附近延伸推荐</h3>
+      <p>蒲城文庙、王鼎纪念馆、重泉古城</p>
+    `
+  }
+};
+
+// ============================================================
+// GENERATE ROUTE CARDS
+// ============================================================
+function generateRouteCards() {
+  const grid = document.getElementById('routesGrid');
+  let html = '';
+  
+  routesData.forEach((route, index) => {
+    html += `
+      <div class="route-card" data-index="${index}">
+        <div class="route-card-img">
+          <img src="${route.image}" alt="${route.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23E2D9C2%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%238A2E2E%22 font-family=%22serif%22 font-size=%2220%22 x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22%3E${route.name}%3C/text%3E%3C/svg%3E'">
+          <span class="dynasty-tag">${route.dynasty}</span>
+          <span class="theme-tag">${route.tag}</span>
+        </div>
+        <div class="route-card-body">
+          <h3 class="route-card-title">${route.name}</h3>
+          <div class="route-card-meta">
+            <span><i class="fa-regular fa-clock"></i>${route.days}</span>
+          </div>
+          <div class="route-card-spots">
+            <div class="route-card-spots-title">核心古建</div>
+            <div class="route-card-spots-list">${route.spots.join(' · ')}</div>
+          </div>
+          <p class="route-card-desc">${route.desc}</p>
+          <a href="#" class="route-card-btn" onclick="openRouteDetail(${index});return false;">查看详细行程</a>
+        </div>
+      </div>
+    `;
+  });
+  
+  grid.innerHTML = html;
+  
+  // Initialize scroll animations after cards are generated
+  initScrollAnimations();
+}
+
+// ============================================================
+// ROUTE DETAIL FUNCTIONS
+// ============================================================
+function openRouteDetail(index) {
+  const modal = document.getElementById('routeDetailModal');
+  const detail = routesDetailData[index];
+  
+  if (detail) {
+    // 有详细内容的路线 - 加载详细内容
+    document.getElementById('detailTitle').textContent = detail.title;
+    document.getElementById('detailOverview').textContent = detail.overview;
+    document.getElementById('detailItinerary').innerHTML = detail.itinerary;
+    document.getElementById('detailTransport').innerHTML = detail.transport;
+    document.getElementById('detailTips').innerHTML = detail.tips;
+    document.getElementById('detailExtension').innerHTML = detail.extension;
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  } else {
+    // 其他路线 - 显示提示
+    showToast(`「${routesData[index].name}」详细行程即将推出，敬请期待完整路书。`);
+  }
+}
+
+function closeRouteDetail() {
+  const modal = document.getElementById('routeDetailModal');
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleFavorite() {
+  showToast('请先登录后再收藏路线');
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('routeDetailModal');
+  const detail = document.getElementById('routeDetail');
+  
+  if (modal.classList.contains('active') && 
+      e.target === modal) {
+    closeRouteDetail();
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeRouteDetail();
+  }
+});
+
+// ============================================================
+// TOAST NOTIFICATION
+// ============================================================
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+
+
+// ============================================================
+// GSAP SCROLL ANIMATIONS
+// ============================================================
+function initScrollAnimations() {
+  // Register ScrollTrigger
+  gsap.registerPlugin(ScrollTrigger);
+  
+  // Animate route cards on scroll
+  const cards = document.querySelectorAll('.route-card');
+  
+  cards.forEach((card, index) => {
+    gsap.from(card, {
+      scrollTrigger: {
+        trigger: card,
+        start: 'top 85%',
+        toggleActions: 'play none none none'
+      },
+      y: 60,
+      opacity: 0,
+      duration: 0.8,
+      delay: index * 0.1,
+      ease: 'power2.out'
+    });
+  });
+  
+  // Animate featured section
+  gsap.from('.featured-content', {
+    scrollTrigger: {
+      trigger: '.featured-section',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    },
+    y: 40,
+    opacity: 0,
+    duration: 1,
+    ease: 'power2.out'
+  });
+  
+  // Animate section header
+  gsap.from('.section-header', {
+    scrollTrigger: {
+      trigger: '.section-header',
+      start: 'top 85%',
+      toggleActions: 'play none none none'
+    },
+    y: 30,
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power2.out'
+  });
+}
+
+// ============================================================
+// INITIALIZE
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  generateRouteCards();
+});
+</script>
+
+</body>
+</html>

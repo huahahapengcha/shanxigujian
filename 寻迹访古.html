@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秦韵古建——陕西古建筑信息管理平台</title>
+<style>
+/* ============ Reset & Base ============ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
+  background: #f5f0e8;
+  color: #3d3226;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ Top Navigation Bar ============ */
+.top-nav {
+  position: sticky; top: 0; z-index: 1000;
+  background: linear-gradient(180deg, #9b1b1b 0%, #7a1212 100%);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+.top-nav-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 30px; height: 72px;
+}
+.logo-area { display: flex; align-items: center; gap: 14px; }
+.logo-icon {
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.15); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.logo-text {
+  font-size: 22px; font-weight: 700; color: #fde8c8;
+  letter-spacing: 3px;
+}
+.logo-sub {
+  font-size: 12px; color: rgba(255,255,255,0.65);
+  letter-spacing: 1px; margin-top: 2px;
+}
+.search-area { flex: 1; max-width: 600px; margin: 0 40px; }
+.search-box {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 2px; overflow: hidden;
+  transition: all 0.3s ease;
+}
+.search-box:focus-within {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.5);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.08);
+}
+.search-box input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: #fff; font-size: 15px; padding: 10px 16px;
+  font-family: inherit;
+}
+.search-box input::placeholder { color: rgba(255,255,255,0.5); }
+.search-btn {
+  background: #c89b3b; border: none;
+  color: #fff; font-size: 15px; padding: 10px 24px;
+  cursor: pointer; font-family: inherit; letter-spacing: 1px;
+  transition: background 0.3s;
+}
+.search-btn:hover { background: #d4a94a; }
+.nav-links { display: flex; align-items: center; gap: 24px; }
+.nav-links a {
+  color: rgba(255,255,255,0.85); text-decoration: none;
+  font-size: 14px; letter-spacing: 1px;
+  transition: color 0.3s; position: relative;
+}
+.nav-links a:hover, .nav-links a.active { color: #fde8c8; }
+.nav-links a.active::after {
+  content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  width: 20px; height: 2px; background: #c89b3b;
+}
+.result-count {
+  color: rgba(255,255,255,0.75); font-size: 13px;
+  white-space: nowrap;
+}
+
+/* ============ Breadcrumb ============ */
+.sub-bar {
+  background: #fff;
+  border-bottom: 1px solid #e5d9c7;
+  padding: 0 30px;
+}
+.sub-bar-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; align-items: center; height: 46px;
+  font-size: 13px; color: #8c7b6b; gap: 8px;
+}
+.sub-bar-inner span { color: #c89b3b; }
+
+/* ============ Layout ============ */
+.layout {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; min-height: calc(100vh - 118px);
+}
+
+/* ============ Sidebar ============ */
+.sidebar {
+  width: 256px; min-width: 256px;
+  background: #fff; border-right: 1px solid #e5d9c7;
+  overflow-y: auto; position: sticky; top: 118px;
+  height: calc(100vh - 118px);
+  padding: 0 0 24px;
+}
+
+.sidebar-section-title {
+  font-size: 13px; font-weight: 700; color: #6b5d4f;
+  padding: 18px 20px 10px;
+  letter-spacing: 2px;
+  display: flex; align-items: center; gap: 10px;
+  user-select: none;
+}
+.sidebar-section-title .bookmark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 22px;
+  background: #9b1b1b; color: #fde8c8;
+  font-size: 11px; font-weight: 700;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  position: relative; top: -1px;
+}
+.sidebar-section-title::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: repeating-linear-gradient(90deg, #d9cebb 0px, #d9cebb 3px, transparent 3px, transparent 6px);
+}
+
+
+.filter-tags {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  padding: 8px 20px 12px;
+}
+.filter-tag {
+  padding: 6px 16px; font-size: 12px;
+  cursor: pointer;
+  border: 1px solid #d9cebb;
+  background: #faf7f1; color: #6b5d4f;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.filter-tag:hover {
+  border-color: #c89b3b; color: #8b6914;
+  background: #fdf8ee;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.filter-tag.active {
+  background: linear-gradient(135deg, #9b1b1b, #7a1212);
+  color: #fde8c8;
+  border-color: #c89b3b;
+  box-shadow: 0 0 0 2px rgba(200,155,59,0.35), 0 3px 10px rgba(155,27,27,0.25);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.clear-filters {
+  margin: 20px 20px 0; width: calc(100% - 40px);
+  padding: 10px; border: 1px solid #d9cebb; background: #fff;
+  cursor: pointer; font-size: 13px; color: #8c7b6b;
+  letter-spacing: 2px; transition: all 0.3s;
+  font-family: inherit; border-radius: 20px;
+  -webkit-tap-highlight-color: transparent;
+}
+.clear-filters:hover {
+  border-color: #9b1b1b; color: #9b1b1b; background: #fdf5f5;
+  box-shadow: 0 2px 8px rgba(155,27,27,0.1);
+}
+
+/* ============ Main Content ============ */
+.main-content {
+  flex: 1; padding: 28px 30px 40px; overflow-y: auto;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(200,155,59,0.03) 0%, transparent 70%),
+    #f5f0e8;
+}
+.section-header {
+  margin-bottom: 28px; position: relative;
+}
+.section-header h2 {
+  font-size: 21px; font-weight: 700; color: #3d3226;
+  letter-spacing: 2px; margin-bottom: 6px;
+}
+.section-header .divider {
+  display: flex; align-items: center; gap: 6px; margin: 10px 0;
+  height: 18px;
+}
+.section-header .divider::before {
+  content: ''; width: 36px; height: 3px; background: #9b1b1b; border-radius: 2px;
+}
+.section-header .divider .fret-pattern {
+  display: flex; gap: 4px; height: 16px; align-items: center;
+}
+.section-header .divider .fret-pattern span {
+  display: block; width: 3px; height: 3px;
+  background: #c89b3b; border-radius: 1px;
+}
+.section-header .divider .fret-pattern span:nth-child(odd) { opacity: 0.5; }
+
+.section-header .seal-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 52px; height: 52px;
+  border: 2px solid #9b1b1b; border-radius: 6px;
+  color: #9b1b1b;
+  font-size: 13px; font-weight: 700; font-family: "STKaiti","KaiTi","楷体",serif;
+  line-height: 1.3; text-align: center;
+  letter-spacing: 1px;
+  transform: rotate(-3deg);
+  position: absolute; right: 0; top: -5px;
+  background: rgba(251,245,245,0.6);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+.section-header p {
+  font-size: 13px; color: #8c7b6b; letter-spacing: 0.5px;
+}
+
+/* ============ Card Grid ============ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+  gap: 22px;
+}
+
+/* ============ Card ============ */
+.card {
+  background: #fff; border: 1px solid #e5d9c7;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* 卡片悬停：上浮 + 阴影加深 */
+.card:hover {
+  box-shadow: 0 12px 36px rgba(0,0,0,0.12), 0 0 0 1px rgba(200,155,59,0.25);
+  transform: translateY(-6px);
+  border-color: #c89b3b;
+}
+
+.card-img-wrap {
+  position: relative; overflow: hidden;
+  background: #f0ebe0; cursor: pointer;
+  aspect-ratio: 4/3;
+}
+.card-img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.card:hover .card-img { transform: scale(1.06); }
+
+/* 半透明遮罩 + 建筑名称浮层 */
+.card-img-mask {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(20,10,5,0.15) 65%,
+    rgba(20,10,5,0.55) 85%,
+    rgba(20,10,5,0.75) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.card:hover .card-img-mask { opacity: 1; }
+
+.card-img-name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 28px 18px 16px;
+  background: linear-gradient(0deg, rgba(20,10,5,0.7) 0%, transparent 100%);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.4s ease 0.05s;
+  pointer-events: none;
+}
+.card:hover .card-img-name { opacity: 1; transform: translateY(0); }
+
+.card-img-name span {
+  color: #fff; font-size: 18px; font-weight: 700;
+  letter-spacing: 3px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  display: block;
+}
+
+.card-img-hint {
+  position: absolute; top: 14px; right: 14px;
+  background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.85);
+  padding: 4px 10px; border-radius: 3px;
+  font-size: 11px; letter-spacing: 1px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.35s ease 0.1s;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+.card:hover .card-img-hint { opacity: 1; transform: translateY(0); }
+
+.card-body {
+  padding: 18px 20px; flex: 1;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.card-title {
+  font-size: 18px; font-weight: 700; color: #3d3226;
+  line-height: 1.4; letter-spacing: 1.5px;
+}
+
+.card-meta {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.badge {
+  display: inline-block; padding: 3px 10px;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.5px;
+  border-radius: 3px;
+}
+.badge-open {
+  background: #e8f5e8; color: #3a7a3a;
+  border: 1px solid #b8d9b8;
+}
+.badge-closed {
+  background: #fbeaea; color: #9b1b1b;
+  border: 1px solid #e8b8b8;
+}
+.badge-dynasty {
+  background: #fdf5e6; color: #8b6914;
+  border: 1px solid #e8d5a0;
+}
+.badge-city {
+  background: #e8f0fa; color: #3a5f8a;
+  border: 1px solid #b8cce0;
+}
+.badge-batch {
+  background: #f3edf8; color: #5b3a7a;
+  border: 1px solid #d0b8e0;
+}
+.badge-level {
+  background: #faeef6; color: #8a3a6a;
+  border: 1px solid #e0b8d0;
+}
+
+.card-detail {
+  font-size: 13px; color: #4a3f34; line-height: 2;
+  padding: 14px 16px;
+  background: #faf7f1;
+  border-left: 2px solid #e5d9c7;
+  text-indent: 2em;
+}
+
+/* ============ Pagination ============ */
+.pagination {
+  display: flex; justify-content: center; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+  padding: 32px 0 12px;
+  user-select: none;
+}
+.page-btn {
+  min-width: 38px; height: 38px;
+  padding: 0 12px;
+  border: 1px solid #d9cebb; background: #fff;
+  color: #6b5d4f; font-size: 14px; font-family: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.25s ease;
+  display: flex; align-items: center; justify-content: center;
+}
+.page-btn:hover:not(:disabled):not(.active) {
+  border-color: #c89b3b; color: #9b1b1b;
+  background: #fdf8ee; transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.page-btn.active {
+  background: #9b1b1b; color: #fde8c8;
+  border-color: #9b1b1b; font-weight: 700;
+  cursor: default; pointer-events: none;
+}
+.page-btn:disabled {
+  opacity: 0.35; cursor: not-allowed; pointer-events: none;
+}
+.page-ellipsis {
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  color: #b8a898; font-size: 16px; letter-spacing: 2px;
+}
+.page-info {
+  font-size: 13px; color: #8c7b6b;
+  margin-left: 12px;
+}
+
+/* ============ No Results ============ */
+.no-results {
+  text-align: center; padding: 100px 20px; color: #b8a898;
+}
+.no-results .icon { font-size: 56px; margin-bottom: 16px; opacity: 0.6; }
+.no-results p { font-size: 15px; letter-spacing: 1px; }
+
+/* ============ Image Lightbox ============ */
+.lightbox {
+  display: none; position: fixed; inset: 0;
+  background: rgba(20,10,5,0.94); z-index: 2000;
+  justify-content: center; align-items: center; cursor: zoom-out;
+  animation: fadeIn 0.2s ease;
+}
+.lightbox.show { display: flex; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.lightbox img {
+  max-width: 92vw; max-height: 92vh;
+  object-fit: contain;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+  animation: zoomIn 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes zoomIn { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+.lightbox-close {
+  position: absolute; top: 24px; right: 32px;
+  color: rgba(255,255,255,0.7); font-size: 36px;
+  cursor: pointer; background: none; border: none;
+  transition: color 0.3s; line-height: 1;
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+}
+.lightbox-close:hover { color: #fff; }
+.lightbox-info {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  color: rgba(255,255,255,0.7); font-size: 14px;
+  letter-spacing: 2px;
+}
+
+/* ============ Footer ============ */
+.page-footer {
+  background: #3d3226; color: rgba(255,255,255,0.6);
+  text-align: center; padding: 22px; font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+/* ============ Scrollbar ============ */
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-thumb { background: #d9cebb; border-radius: 3px; }
+.main-content::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-thumb { background: #d9cebb; border-radius: 3px; }
+
+/* ============ Card appear animation ============ */
+.card {
+  animation: cardAppear 0.45s ease both;
+}
+@keyframes cardAppear {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 1100px) {
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%; min-width: unset; position: static;
+    height: auto; max-height: 320px; border-right: none;
+    border-bottom: 1px solid #e5d9c7; padding-bottom: 8px;
+  }
+  .sidebar-section-title { padding-top: 14px; padding-bottom: 8px; }
+  .filter-tags { padding-top: 4px; padding-bottom: 8px; }
+  .filter-tag {
+    padding: 7px 15px; font-size: 13px;
+    min-height: 36px; display: flex; align-items: center;
+  }
+  .top-nav-inner {
+    padding: 0 14px; flex-wrap: wrap; height: auto;
+    padding-top: 10px; padding-bottom: 10px; gap: 10px;
+  }
+  .search-area { max-width: 100%; margin: 0; }
+  .nav-links { display: none; }
+  .card-grid { grid-template-columns: 1fr; }
+  .main-content { padding: 18px 14px 30px; }
+  .section-header .seal-count { width: 42px; height: 42px; font-size: 11px; right: 4px; top: -2px; }
+  .card-title { font-size: 16px; }
+  .pagination {
+    padding: 20px 0 8px; gap: 6px;
+  }
+  .page-btn {
+    min-width: 34px; height: 34px; padding: 0 10px; font-size: 13px;
+  }
+  .page-info { font-size: 12px; margin-left: 8px; }
+}
+
+@media (max-width: 480px) {
+  .logo-text { font-size: 17px; letter-spacing: 1px; }
+  .logo-icon { width: 34px; height: 34px; font-size: 18px; }
+  .search-box input { font-size: 14px; padding: 8px 12px; }
+  .search-btn { padding: 8px 16px; font-size: 13px; }
+  .card-grid { gap: 14px; }
+  .card-img-wrap { aspect-ratio: 3/2; }
+  .card-body { padding: 14px; }
+  .filter-tag { padding: 6px 12px; font-size: 12px; border-radius: 16px; }
+  .page-btn {
+    min-width: 30px; height: 30px; padding: 0 8px; font-size: 12px;
+  }
+  .page-info { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Top Navigation ===== -->
+<header class="top-nav">
+  <div class="top-nav-inner">
+    <div class="logo-area">
+      <div class="logo-icon">🏯</div>
+      <div>
+        <div class="logo-text">秦韵古建</div>
+        <div class="logo-sub">SHAANXI ANCIENT ARCHITECTURE PLATFORM</div>
+      </div>
+    </div>
+    <div class="search-area">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索古建筑名称、朝代、城市……" oninput="applyFilters()">
+        <button class="search-btn" onclick="applyFilters()">检 索</button>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="寻迹访古.html" class="active">寻迹访古</a>
+    </div>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+</header>
+
+<!-- ===== Sub Bar ===== -->
+<div class="sub-bar">
+  <div class="sub-bar-inner">
+    <a href="陕西古建筑旅游信息平台.html">首页</a> <span>&gt;</span> 寻迹访古
+  </div>
+</div>
+
+<!-- ===== Layout ===== -->
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section-title"><span class="bookmark">▼</span> 建 立 朝 代</div>
+    <div class="filter-tags" id="dynastyFilters"></div>
+
+    <div class="sidebar-section-title"><span class="bookmark">▼</span> 所 在 城 市</div>
+    <div class="filter-tags" id="cityFilters"></div>
+
+    <div class="sidebar-section-title"><span class="bookmark">▼</span> 保 护 批 次</div>
+    <div class="filter-tags" id="batchFilters"></div>
+
+    <div class="sidebar-section-title"><span class="bookmark">▼</span> 保 护 级 别</div>
+    <div class="filter-tags" id="levelFilters"></div>
+
+    <div class="sidebar-section-title"><span class="bookmark">▼</span> 建 筑 类 型</div>
+    <div class="filter-tags" id="typeFilters"></div>
+
+    <div class="sidebar-section-title"><span class="bookmark">▼</span> 开 放 状 态</div>
+    <div class="filter-tags" id="openStatusFilters"></div>
+
+    <button class="clear-filters" onclick="clearAllFilters()">重 置 筛 选</button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <div class="section-header">
+      <h2 id="sectionTitle">秦韵古建 · 陕西古建筑</h2>
+      <div class="divider"><span class="fret-pattern"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></div>
+      <p id="sectionDesc">共收录古建筑文化遗产数据</p>
+      <div class="seal-count" id="sealCount" title="收录总数">364</div>
+    </div>
+    <div class="card-grid" id="cardGrid"></div>
+    <div class="no-results" id="noResults" style="display:none;">
+      <div class="icon">📜</div>
+      <p>未检索到匹配的古建筑记录</p>
+      <p style="font-size:12px;margin-top:4px;">请尝试调整搜索条件或筛选标签</p>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </main>
+</div>
+
+<!-- ===== Image Lightbox ===== -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-info" id="lightboxInfo"></div>
+</div>
+
+<!-- ===== Footer ===== -->
+<footer class="page-footer">
+  © 秦韵古建——陕西古建筑信息管理平台 &nbsp;·&nbsp; 数据持续更新中 &nbsp;·&nbsp; 共收录 364 座古建筑
+</footer>
+
+<script src="data.js"></script>
+<script>
+// ===== Load Data =====
+let allData = [];
+let filters = {};
+let filteredData = [];
+let currentPage = 1;
+const pageSize = 10;
+let activeFilters = {
+  dynasty: null, city: null, batch: null, level: null, type: null, openStatus: null
+};
+
+// 通过 data.js 脚本加载数据（支持 file:// 本地打开）
+try {
+  allData = window.CCTV_DATA.records;
+  filters = window.CCTV_DATA.filters;
+  initFilters();
+  applyFilters();
+} catch(e) {
+  console.error(e);
+  document.getElementById('cardGrid').innerHTML =
+    '<div class="no-results"><div class="icon">📜</div><p>数据加载失败，请确保 data.js 存在于同目录下</p></div>';
+}
+
+// ===== Init Sidebar =====
+function initFilters() {
+  renderTags('dynastyFilters', filters.dynasties, 'dynasty');
+  renderTags('cityFilters', filters.cities, 'city');
+  renderTags('batchFilters', filters.batches, 'batch');
+  renderTags('levelFilters', filters.levels, 'level');
+  renderTags('typeFilters', filters.types, 'type');
+  renderTags('openStatusFilters', filters.openStatus, 'openStatus');
+}
+
+function renderTags(containerId, values, filterKey) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = values.map(v =>
+    `<span class="filter-tag" onclick="toggleFilter(event,'${filterKey}','${escAttr(v)}')">${escHtml(v)}</span>`
+  ).join('');
+}
+
+function toggleFilter(e, key, value) {
+  const el = e.currentTarget;
+  if (activeFilters[key] === value) {
+    activeFilters[key] = null;
+    el.classList.remove('active');
+  } else {
+    el.parentElement.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    activeFilters[key] = value;
+    el.classList.add('active');
+  }
+  applyFilters();
+}
+
+function clearAllFilters() {
+  activeFilters = { dynasty: null, city: null, batch: null, level: null, type: null, openStatus: null };
+  document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+  document.getElementById('searchInput').value = '';
+  applyFilters();
+}
+
+// ===== Filter & Render =====
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  let filtered = allData.filter(item => {
+    if (q) {
+      const txt = [
+        item['古建筑名称'], item['建立朝代'], item['朝代归类'], item['城市'], item['类型'],
+        item['功能'], item['大致位置'], item['具体地址'], item['保护批次'], item['批次归类'],
+        item['保护单位级别'], item['级别归类'], item['开放状态'], item['建筑外貌与内里'], item['历史沿革']
+      ].filter(Boolean).join(' ').toLowerCase();
+      if (!txt.includes(q)) return false;
+    }
+    if (activeFilters.dynasty  && item['朝代归类'] !== activeFilters.dynasty) return false;
+    if (activeFilters.city     && item['城市'] !== activeFilters.city) return false;
+    if (activeFilters.batch    && item['批次归类'] !== activeFilters.batch) return false;
+    if (activeFilters.level    && item['级别归类'] !== activeFilters.level) return false;
+    if (activeFilters.type     && item['类型'] !== activeFilters.type) return false;
+    if (activeFilters.openStatus && item['开放状态'] !== activeFilters.openStatus) return false;
+    return true;
+  });
+
+  filteredData = filtered;
+  currentPage = 1;
+  renderCards();
+  document.getElementById('resultCount').textContent = '共 ' + filtered.length + ' 条';
+  document.getElementById('sectionDesc').textContent =
+    '共收录陕西古建筑数据 · 当前显示 ' + filtered.length + ' 条记录';
+  document.getElementById('sealCount').textContent = filtered.length;
+}
+
+function renderCards() {
+  const grid = document.getElementById('cardGrid');
+  const noRes = document.getElementById('noResults');
+
+  if (filteredData.length === 0) {
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  const start = (currentPage - 1) * pageSize;
+  const pageData = filteredData.slice(start, start + pageSize);
+
+  grid.innerHTML = pageData.map((item, idx) => {
+    const seq = item['序号'];
+    const ext = (seq === 237) ? 'webp' : 'jpg';
+    const imgSrc = 'images/' + seq + '.' + ext;
+    const name = item['古建筑名称'] || '';
+    const imgErr = 'this.onerror=null;this.src=\'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="%23f0ebe0"><rect width="400" height="300"/><text x="200" y="150" text-anchor="middle" fill="%23c8b898" font-size="16" font-family="sans-serif">暂无图片</text></svg>') + '\';';
+    const animDelay = (idx % 30) * 0.03;
+
+    return `
+    <div class="card" style="animation-delay:${animDelay}s">
+      <div class="card-img-wrap" onclick="openLightbox('${imgSrc}','${escAttr(name)}')">
+        <img class="card-img" src="${imgSrc}" alt="${escAttr(name)}" onerror="${imgErr}" loading="lazy">
+        <div class="card-img-mask"></div>
+        <div class="card-img-hint">点击查看大图</div>
+        <div class="card-img-name"><span>${escHtml(name)}</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${escHtml(name)}</div>
+        <div class="card-meta">
+          ${item['开放状态'] ? '<span class="badge ' + (item['开放状态']==='开放'?'badge-open':'badge-closed') + '">' + escHtml(item['开放状态']) + '</span>' : ''}
+          ${item['建立朝代'] ? '<span class="badge badge-dynasty">' + escHtml(item['建立朝代']) + '</span>' : ''}
+          ${item['城市'] ? '<span class="badge badge-city">' + escHtml(item['城市']) + '</span>' : ''}
+          ${item['保护批次'] ? '<span class="badge badge-batch">' + escHtml(item['保护批次']) + '</span>' : ''}
+          ${item['保护单位级别'] ? '<span class="badge badge-level">' + escHtml(item['保护单位级别']) + '</span>' : ''}
+        </div>
+        <div class="card-detail">
+          ${buildDetailParagraph(item)}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderPagination();
+}
+
+function buildDetailParagraph(item) {
+  // 将多个字段组合成一段自然流畅的中文描述
+  const parts = [];
+  const name = item['古建筑名称'];
+  const dynasty = item['建立朝代'];
+  const time = item['建立时间'];
+  const city = item['城市'];
+  const pos = item['大致位置'];
+  const addr = item['具体地址'];
+  const type = item['类型'];
+  const func = item['功能'];
+  const batch = item['保护批次'];
+  const level = item['保护单位级别'];
+  const open = item['开放状态'];
+  const appear = item['建筑外貌与内里'];
+  const history = item['历史沿革'];
+
+  // 地理信息
+  const locParts = [];
+  if (city) locParts.push(city);
+  if (pos) locParts.push(pos);
+  if (addr) locParts.push(addr);
+  let locStr = locParts.length ? locParts.join('，') : '';
+
+  // 朝代与年代
+  let dynastyStr = '';
+  if (dynasty) {
+    dynastyStr = time ? (dynasty + '（' + String(time) + '）') : dynasty;
+  } else if (time) {
+    dynastyStr = String(time);
+  }
+
+  if (name) {
+    let s = escHtml(name);
+    if (locStr) s += '，坐落于' + escHtml(locStr);
+    if (dynastyStr) s += '，始建于' + escHtml(dynastyStr);
+    parts.push(s);
+  } else {
+    if (locStr) parts.push('坐落于' + escHtml(locStr));
+    if (dynastyStr) parts.push('始建于' + escHtml(dynastyStr));
+  }
+
+  // 类型/功能
+  const tfParts = [];
+  if (type) tfParts.push('属于' + escHtml(type));
+  if (func) tfParts.push('功能为' + escHtml(func));
+  if (tfParts.length) parts.push(tfParts.join('，'));
+
+  // 保护信息
+  const proParts = [];
+  if (batch) proParts.push(escHtml(batch));
+  if (level) proParts.push(escHtml(level));
+  if (proParts.length) parts.push('保护身份：' + proParts.join('，'));
+
+  // 开放状态
+  if (open) parts.push('当前' + escHtml(open));
+
+  // 建筑外貌与内里
+  if (appear) parts.push('建筑风貌：' + escHtml(appear));
+
+  // 历史沿革
+  if (history) parts.push('历史沿革：' + escHtml(history));
+
+  return parts.join('。') + (parts.length ? '。' : '');
+}
+
+// ===== Pagination =====
+function renderPagination() {
+  const container = document.getElementById('pagination');
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+  let html = '';
+  html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})"${currentPage === 1 ? ' disabled' : ''}>‹ 上一页</button>`;
+
+  const startP = Math.max(1, currentPage - 2);
+  const endP = Math.min(totalPages, currentPage + 2);
+
+  if (startP > 1) {
+    html += `<button class="page-btn" onclick="goToPage(1)">1</button>`;
+    if (startP > 2) html += '<span class="page-ellipsis">…</span>';
+  }
+
+  for (let i = startP; i <= endP; i++) {
+    html += `<button class="page-btn${i === currentPage ? ' active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+  }
+
+  if (endP < totalPages) {
+    if (endP < totalPages - 1) html += '<span class="page-ellipsis">…</span>';
+    html += `<button class="page-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+  }
+
+  html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})"${currentPage === totalPages ? ' disabled' : ''}>下一页 ›</button>`;
+  html += `<span class="page-info">第 ${currentPage}/${totalPages} 页，共 ${filteredData.length} 条</span>`;
+
+  container.innerHTML = html;
+}
+
+function goToPage(page) {
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  renderCards();
+  document.getElementById('mainContent').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===== Lightbox =====
+function openLightbox(src, name) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxInfo').textContent = name;
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// ===== Helpers =====
+function escHtml(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+function escAttr(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+
+</body>
+</html>
